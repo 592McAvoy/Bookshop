@@ -1,0 +1,20 @@
+.Logo{
+    margin-bottom: 0px;
+    height: 100px;
+    position: relative;
+}
+.Logo #img{
+    background-image: url('../../images/1.jpg');
+    background-size: cover;
+    width: 150px;
+    height: 80px;
+    float: left;
+    margin: 10px;
+}
+.Logo h1{
+    float: right;
+    margin-bottom: 0px;
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    font-size: 3em;
+}

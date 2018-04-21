@@ -1,0 +1,21 @@
+html{
+    background:white;
+    font:16px Arial;
+}
+
+.layout{
+    max-width: 960px;
+    margin-top: 0px;
+}
+
+.layout .header{
+    max-width: 960px;
+    margin: 0 auto;
+    height: 120px;
+}
+
+.layout .content{
+    max-width: 960px;
+    margin: 0 auto;
+    height: 500px;
+}
