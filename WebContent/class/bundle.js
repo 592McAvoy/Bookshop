@@ -1354,7 +1354,7 @@ var Log = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Log.__proto__ || Object.getPrototypeOf(Log)).call(this, props));
 
-        _this.handleLog = _this.handleLog.bind(_this);
+        _this.checkLog = _this.checkLog.bind(_this);
         _this.handleLogOut = _this.handleLogOut.bind(_this);
         _this.handleRegister = _this.handleRegister.bind(_this);
         _this.changePassword = _this.changePassword.bind(_this);
@@ -1393,9 +1393,44 @@ var Log = function (_React$Component) {
             _event2.default.removeListener(this.eventEmitter);
         }
     }, {
-        key: "handleLog",
-        value: function handleLog(e) {
+        key: "checkLog",
+        value: function checkLog(e) {
             e.preventDefault();
+            alert("begin check log!\n");
+            var xmlhttp;
+
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            this.serverRequest = xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    alert("Response!");
+                    var pwd = xmlhttp.responseText + "";
+                    pwd = pwd.replace(/^\s+|\s+$/g, "");
+                    //console.log(typeof (pwd));
+                    //console.log(typeof (this.state.password));
+                    //console.log(this.state.password.trim() == pwd.trim());
+                    if (this.state.password.trim() == pwd.trim()) {
+                        alert("correct password!\n");
+                        this.handleLog();
+                    } else if (pwd.trim() == "ERROR") {
+                        alert("user doesn't exist!");
+                    } else {
+                        alert("false password!");
+                    }
+                }
+            }.bind(this);
+            xmlhttp.open("GET", "Userinfo?un=" + this.state.userName, false);
+            //console.log(xmlhttp);
+            xmlhttp.send();
+        }
+    }, {
+        key: "handleLog",
+        value: function handleLog() {
+            //e.preventDefault();
+            //this.checkLog();
             this.setState({ logIn: true });
 
             var cb = function cb(msg) {
@@ -1532,7 +1567,7 @@ var Log = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     "form",
-                    { onSubmit: this.handleLog },
+                    { onSubmit: this.checkLog },
                     _react2.default.createElement(
                         "label",
                         null,

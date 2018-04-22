@@ -5,7 +5,7 @@ class Log extends React.Component{
     constructor(props){
         super(props);
 
-        this.handleLog = this.handleLog.bind(this);
+        this.checkLog = this.checkLog.bind(this);
         this.handleLogOut = this.handleLogOut.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
         this.changePassword = this.changePassword.bind(this);
@@ -37,8 +37,43 @@ class Log extends React.Component{
         emitter.removeListener(this.eventEmitter);
     }
 
-    handleLog(e){
+    checkLog(e){
         e.preventDefault();
+        alert("begin check log!\n");
+        var xmlhttp;
+
+        if (window.XMLHttpRequest) {
+           xmlhttp = new XMLHttpRequest();
+        } else {
+           xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        this.serverRequest = (xmlhttp.onreadystatechange = function() {
+           if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+               alert("Response!");
+               var pwd = xmlhttp.responseText+"";
+               pwd = pwd.replace( /^\s+|\s+$/g, "" );
+               //console.log(typeof (pwd));
+               //console.log(typeof (this.state.password));
+               //console.log(this.state.password.trim() == pwd.trim());
+               if(this.state.password.trim()==pwd.trim()){
+                   alert("correct password!\n");
+                   this.handleLog();
+               }else if(pwd.trim()=="ERROR"){
+                   alert("user doesn't exist!")
+               }else{
+                   alert("false password!");
+               }
+           }
+        }.bind(this));
+        xmlhttp.open("GET", "Userinfo?un="+this.state.userName, false);
+        //console.log(xmlhttp);
+        xmlhttp.send();
+
+    }
+
+    handleLog(){
+        //e.preventDefault();
+        //this.checkLog();
         this.setState({logIn:true});
 
         const cb = (msg) => {
@@ -125,7 +160,7 @@ class Log extends React.Component{
                 <p>New user please 
                     <button onClick={this.handleRegister}> click here</button>
                 to register</p>
-                <form onSubmit={this.handleLog}>
+                <form onSubmit={this.checkLog}>
                     <label>
                         UserName:<input type="text" value={this.state.userName} 
                         onChange={this.changeUsr} placeholder="..."/>
