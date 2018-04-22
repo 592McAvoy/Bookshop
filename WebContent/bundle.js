@@ -1355,12 +1355,14 @@ var Log = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Log.__proto__ || Object.getPrototypeOf(Log)).call(this, props));
 
         _this.checkLog = _this.checkLog.bind(_this);
+        _this.checkRegister = _this.checkRegister.bind(_this);
         _this.handleLogOut = _this.handleLogOut.bind(_this);
         _this.handleRegister = _this.handleRegister.bind(_this);
         _this.changePassword = _this.changePassword.bind(_this);
         _this.changeUsr = _this.changeUsr.bind(_this);
         _this.changeEmailAddr = _this.changeEmailAddr.bind(_this);
         _this.changePhoneNum = _this.changePhoneNum.bind(_this);
+        _this.dealNum = _this.dealNum.bind(_this);
 
         _this.state = {
             load: false,
@@ -1369,7 +1371,12 @@ var Log = function (_React$Component) {
             userName: "my friend",
             password: "",
             phoneNum: "",
-            emailAddr: ""
+            emailAddr: "",
+            validUser: true,
+            validPwd: false,
+            validEmail: true,
+            validPhone: true,
+            validInfo: false
         };
         return _this;
     }
@@ -1409,13 +1416,10 @@ var Log = function (_React$Component) {
                     alert("Response!");
                     var pwd = xmlhttp.responseText + "";
                     pwd = pwd.replace(/^\s+|\s+$/g, "");
-                    //console.log(typeof (pwd));
-                    //console.log(typeof (this.state.password));
-                    //console.log(this.state.password.trim() == pwd.trim());
                     if (this.state.password.trim() == pwd.trim()) {
                         alert("correct password!\n");
                         this.handleLog();
-                    } else if (pwd.trim() == "ERROR") {
+                    } else if (pwd.trim() == "USERERROR") {
                         alert("user doesn't exist!");
                     } else {
                         alert("false password!");
@@ -1429,29 +1433,79 @@ var Log = function (_React$Component) {
     }, {
         key: "handleLog",
         value: function handleLog() {
-            //e.preventDefault();
-            //this.checkLog();
-            this.setState({ logIn: true });
+            alert("I am called!");
+            if (this.state.register) {
+                console.log("validInfo: " + this.state.validInfo);
+                if (!this.state.validInfo) {
+                    console.log("invalid validinfo");
+                    return;
+                }
+            }
 
+            this.setState({
+                logIn: true,
+                register: false
+            });
+            console.log("1");
             var cb = function cb(msg) {
                 _event2.default.emit("Log", msg);
             };
             cb("Log in");
             alert("Welcome " + this.state.userName);
-
+            console.log("2");
             var ca = function ca(msg) {
                 _event2.default.emit("Page", msg);
             };
             ca("Homepage");
-
+            console.log("3");
             var cn = function cn(msg) {
                 _event2.default.emit("User", msg);
             };
             cn(this.state.userName);
+            alert("log end! success!");
+        }
+    }, {
+        key: "checkRegister",
+        value: function checkRegister(e) {
+            e.preventDefault();
+            alert("begin check Register!\n");
+
+            var xmlhttp;
+
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            this.serverRequest = xmlhttp.onreadystatechange = function () {
+                var _this3 = this;
+
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    alert("regResponse!");
+                    var pwd = xmlhttp.responseText + "";
+                    pwd = pwd.replace(/^\s+|\s+$/g, "");
+                    if (pwd.trim() == "ADDUSER") {
+                        alert("add!");
+                        this.setState({
+                            validUser: true,
+                            validInfo: true
+                        }, function () {
+                            _this3.handleLog(); //new
+                        });
+                    } else {
+                        alert("invalid user");
+                        this.setState({ validUser: false });
+                    }
+                }
+            }.bind(this);
+            xmlhttp.open("POST", "Userinfo", false);
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            console.log(xmlhttp);
+            xmlhttp.send("user=" + this.state.userName + "&pwd=" + this.state.password + "&email=" + this.state.emailAddr + "&phone=" + this.state.phoneNum);
         }
     }, {
         key: "handleRegister",
-        value: function handleRegister(e) {
+        value: function handleRegister() {
             this.setState({ register: true });
         }
     }, {
@@ -1459,7 +1513,16 @@ var Log = function (_React$Component) {
         value: function handleLogOut(e) {
             this.setState({
                 logIn: false,
-                register: false
+                register: false,
+                userName: "my friend",
+                password: "",
+                phoneNum: "",
+                emailAddr: "",
+                validUser: true,
+                validPwd: false,
+                validEmail: true,
+                validPhone: true,
+                validInfo: false
             });
             var cb = function cb(msg) {
                 _event2.default.emit("Log", msg);
@@ -1469,7 +1532,18 @@ var Log = function (_React$Component) {
     }, {
         key: "changePassword",
         value: function changePassword(e) {
-            this.setState({ password: e.target.value });
+            var pwd = e.target.value;
+            this.setState({ password: pwd });
+            if (pwd.length >= 6) {
+                var regNumber = /\d+/; //验证0-9的任意数字最少出现1次。
+                var regString = /[a-zA-Z]+/; //验证大小写26个字母任意字母最少出现1次。
+                if (regNumber.test(pwd) && regString.test(pwd)) {
+                    console.log('pwd：验证成功');
+                    this.setState({ validPwd: true });
+                    return;
+                }
+            }
+            this.setState({ validPwd: false });
         }
     }, {
         key: "changeUsr",
@@ -1477,14 +1551,35 @@ var Log = function (_React$Component) {
             this.setState({ userName: e.target.value });
         }
     }, {
+        key: "dealNum",
+        value: function dealNum(e) {
+            var ss = e.target.value;
+            ss = ss.replace(/\D/g, '');
+            this.setState({ phoneNum: ss });
+        }
+    }, {
         key: "changePhoneNum",
         value: function changePhoneNum(e) {
-            this.setState({ phoneNum: e.target.value });
+            var phone = e.target.value;
+            this.setState({ phoneNum: phone });
+            if (phone.length == 11) {
+                console.log('phone：验证成功');
+                this.setState({ validPhone: true });
+                return;
+            }
+            this.setState({ validPhone: false });
         }
     }, {
         key: "changeEmailAddr",
         value: function changeEmailAddr(e) {
-            this.setState({ emailAddr: e.target.value });
+            var email = e.target.value;
+            this.setState({ emailAddr: email });
+            if (email.indexOf("@") > 1) {
+                console.log('email：验证成功');
+                this.setState({ validEmail: true });
+                return;
+            }
+            this.setState({ validEmail: false });
         }
     }, {
         key: "renderLog",
@@ -1514,13 +1609,18 @@ var Log = function (_React$Component) {
                     null,
                     _react2.default.createElement(
                         "form",
-                        { id: "f1", onSubmit: this.handleLog },
+                        { id: "f1", onSubmit: this.checkRegister },
                         _react2.default.createElement(
                             "label",
                             null,
                             "UserName:",
                             _react2.default.createElement("input", { type: "text", value: this.state.userName,
-                                onChange: this.changeUsr, placeholder: "..." })
+                                onChange: this.changeUsr, placeholder: "..." }),
+                            _react2.default.createElement(
+                                "span",
+                                { id: "s1" },
+                                this.state.validUser ? "" : "user already exists"
+                            )
                         ),
                         _react2.default.createElement("br", null),
                         _react2.default.createElement(
@@ -1528,7 +1628,12 @@ var Log = function (_React$Component) {
                             null,
                             "Password:",
                             _react2.default.createElement("input", { type: "text", value: this.state.password,
-                                onChange: this.changePassword, placeholder: "..." })
+                                onChange: this.changePassword, placeholder: "..." }),
+                            _react2.default.createElement(
+                                "span",
+                                { id: "s2" },
+                                this.state.validPwd ? "" : "please combine letters with numbers"
+                            )
                         ),
                         _react2.default.createElement("br", null),
                         _react2.default.createElement(
@@ -1536,7 +1641,13 @@ var Log = function (_React$Component) {
                             null,
                             "PhoneNumber:",
                             _react2.default.createElement("input", { type: "text", value: this.state.phoneNum,
-                                onChange: this.changePhoneNum, placeholder: "..." })
+                                onChange: this.changePhoneNum, placeholder: "...",
+                                onKeyUp: this.dealNum }),
+                            _react2.default.createElement(
+                                "span",
+                                { id: "s3" },
+                                this.state.validPhone ? "" : "invalid phone number"
+                            )
                         ),
                         _react2.default.createElement("br", null),
                         _react2.default.createElement(
@@ -1544,10 +1655,16 @@ var Log = function (_React$Component) {
                             null,
                             "EmailAddr:",
                             _react2.default.createElement("input", { type: "text", value: this.state.emailAddr,
-                                onChange: this.changeEmailAddr, placeholder: "..." })
+                                onChange: this.changeEmailAddr, placeholder: "..." }),
+                            _react2.default.createElement(
+                                "span",
+                                { id: "s4" },
+                                this.state.validEmail ? "" : "invalid email address"
+                            )
                         ),
                         _react2.default.createElement("br", null),
-                        _react2.default.createElement("input", { type: "submit", value: "Register" })
+                        _react2.default.createElement("input", { type: "submit", value: "Register",
+                            disabled: !(this.state.validEmail && this.state.validPhone && this.state.validPwd) })
                     )
                 );
             }

@@ -7,7 +7,7 @@
 
 	<class name="User" table="user_info">
 		<id name="username" column="username">
-			<generator class="native" />
+			<generator class="assigned" />
 		</id>
 		<property name="pwd" />
 		<property name="role" />
