@@ -1,5 +1,8 @@
-package user;
+package bookshop.Servlet;
 
+
+import bookshop.Entity.User;
+import bookshop.Util.HibernateUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,19 +19,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 
 /**
  * Servlet implementation class UserManagerServlet
  */
-@WebServlet("/Userinfo")
-public class UserinfoServlet extends HttpServlet {
+@WebServlet("/UserLog")
+public class LogServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public UserinfoServlet() {
+	public LogServlet() {
 		super();
 	}
 
@@ -39,7 +43,8 @@ public class UserinfoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 		    //System.out.println("here!\n");
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            Transaction tx = session.beginTransaction();
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
             
@@ -62,7 +67,9 @@ public class UserinfoServlet extends HttpServlet {
 
             out.flush();
             out.close();
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            tx.commit();
+            session.close();
         }
         catch (Exception ex) {
             HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
@@ -81,7 +88,7 @@ public class UserinfoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-            session.beginTransaction();
+            Transaction tx = session.beginTransaction();
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
@@ -113,7 +120,9 @@ public class UserinfoServlet extends HttpServlet {
                 System.out.println(s);
                 out.print("ADDUSER");
             }
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            tx.commit();
+            session.close();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
             out.flush();
             out.close();
 

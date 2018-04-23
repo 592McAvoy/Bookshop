@@ -47,6 +47,27 @@ class Log extends React.Component{
     checkLog(e){
         e.preventDefault();
         alert("begin check log!\n");
+        /*
+        $.ajax({
+            url: "UserLog",
+            async: false,
+            data: "un="+this.state.userName,
+            type: "get",
+            success: function(pwd){
+                alert("Response!");
+
+                pwd = pwd.replace( /^\s+|\s+$/g, "" );
+                if(this.state.password.trim()==pwd.trim()){
+                    alert("correct password!\n");
+                    this.handleLog();
+                }else if(pwd.trim()=="USERERROR"){
+                    alert("user doesn't exist!")
+                }else{
+                    alert("false password!");
+                }
+            }.bind(this)
+        });*/
+
         var xmlhttp;
 
         if (window.XMLHttpRequest) {
@@ -69,13 +90,13 @@ class Log extends React.Component{
                }
            }
         }.bind(this));
-        xmlhttp.open("GET", "Userinfo?un="+this.state.userName, false);
+        xmlhttp.open("GET", "UserLog?un="+this.state.userName, false);
         //console.log(xmlhttp);
         xmlhttp.send();
 
     }
     handleLog(){
-        alert("I am called!");
+        //alert("I am called!");
         if(this.state.register){
             console.log("validInfo: "+this.state.validInfo);
             if(!this.state.validInfo){
@@ -88,28 +109,53 @@ class Log extends React.Component{
             logIn:true,
             register:false
         });
-        console.log("1");
+        //console.log("1");
         const cb = (msg) => {
             emitter.emit("Log",msg)
         }
         cb("Log in");
         alert("Welcome "+this.state.userName);
-        console.log("2");
+        //console.log("2");
         const ca = (msg) => {
             emitter.emit("Page",msg)
         }
         ca("Homepage");
-        console.log("3");
+        //console.log("3");
         const cn = (msg) => {
             emitter.emit("User",msg)
         }
         cn(this.state.userName);
-        alert("log end! success!");
+        //alert("log end! success!");
     }
 
     checkRegister(e){
         e.preventDefault();
         alert("begin check Register!\n");
+        /*
+        $.ajax({
+            url: "UserLog",
+            async: false,
+            data: "user="+this.state.userName+"&pwd="+this.state.password+"&email="+this.state.emailAddr+"&phone="+this.state.phoneNum,
+            type: "post",
+            success: function(pwd){
+                alert("regResponse!");
+                //var pwd = xmlhttp.responseText+"";
+                pwd = pwd.replace( /^\s+|\s+$/g, "" );
+                if(pwd.trim()=="ADDUSER"){
+                    alert("add!");
+                    this.setState({
+                        validUser:true,
+                        validInfo:true
+                    }, ()=>{
+                        this.handleLog(); //new
+                    });
+
+                }else {
+                    alert("invalid user");
+                    this.setState({validUser:false});
+                }
+            }.bind(this)
+        });*/
 
         var xmlhttp;
 
@@ -138,14 +184,18 @@ class Log extends React.Component{
                 }
             }
         }.bind(this));
-        xmlhttp.open("POST", "Userinfo", false);
+        xmlhttp.open("POST", "UserLog", false);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         console.log(xmlhttp);
         xmlhttp.send("user="+this.state.userName+"&pwd="+this.state.password+"&email="+this.state.emailAddr+"&phone="+this.state.phoneNum);
 
     }
     handleRegister(){
-        this.setState({register:true});
+        this.setState({
+            register:true,
+            userName:"",
+            password:""
+        });
     }
     handleLogOut(e){
         this.setState({
@@ -170,6 +220,9 @@ class Log extends React.Component{
     changePassword(e){
         var pwd = e.target.value;
         this.setState({password:pwd});
+        if(!this.state.register){
+            return;
+        }
         if(pwd.length>=6){
             var regNumber = /\d+/; //验证0-9的任意数字最少出现1次。
             var regString = /[a-zA-Z]+/; //验证大小写26个字母任意字母最少出现1次。

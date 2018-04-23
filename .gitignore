@@ -1,5 +1,7 @@
 node_modules/
 .idea/
-lib/
+WebContent/WEB-INF
+WebContent/class
 out/
 js/build
+

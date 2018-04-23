@@ -48,6 +48,18 @@ class BookTable extends React.Component{
                 this.setState({isLog:false});  
             }         
         });
+
+        $.ajax({
+            url: "getBook",
+            async: true,
+            type: "get",
+            success: function(data){
+                alert("bookResponse!");
+                this.setState({
+                    data: JSON.parse(data),
+                });
+            }.bind(this)
+        });
     }
     componentWillUnmount(){
         emitter.removeListener(this.eventEmitter);

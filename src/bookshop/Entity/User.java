@@ -1,4 +1,4 @@
-package user;
+package bookshop.Entity;
 
 public class User {
 
