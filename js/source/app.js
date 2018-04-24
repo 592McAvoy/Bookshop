@@ -6,6 +6,9 @@ import BookTable from './components/BookTable'
 import Log from './components/Log'
 import ShoppingCart from './components/ShoppingCart'
 import UserInfo from './components/UserInfo'
+import ManageBook from './components/ManageBook'
+import ManageUser from './components/ManageUser'
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { userInfo } from 'os';
@@ -45,6 +48,8 @@ ReactDOM.render(
       <ShoppingCart/>
       <UserInfo/>
       <Log/>
+      <ManageBook/>
+      <ManageUser/>
     </div>    
   </div>,
   document.getElementById('app')

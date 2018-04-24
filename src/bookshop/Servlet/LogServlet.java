@@ -3,13 +3,12 @@ package bookshop.Servlet;
 
 import bookshop.Entity.User;
 import bookshop.Util.HibernateUtil;
+import bookshop.Dao.UserDao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -43,36 +42,44 @@ public class LogServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 		    //System.out.println("here!\n");
-            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-            Transaction tx = session.beginTransaction();
+            //Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            //Transaction tx = session.beginTransaction();
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
             
             System.out.println("Servlet invoke!");
 
             String un = (String) request.getParameter("un");
-            System.out.println(un);
-            User user = (User)HibernateUtil.getSessionFactory()
-                                .getCurrentSession().createQuery("from User where username = ? ")
-                                .setParameter(0,un).uniqueResult();
+            String password = (String) request.getParameter("pwd");
+            System.out.println("name；"+un+" pwd: "+password);
+            UserDao dao = new UserDao();
+            User user = dao.getByName(un);
+            //User user = (User)HibernateUtil.getSessionFactory()
+            //                    .getCurrentSession().createQuery("from User where username = ? ")
+            //                    .setParameter(0,un).uniqueResult();
             System.out.println(user);
-            String pwd;
+            String resp;
             if (user != null){
-                pwd = user.getPwd();
+                if(user.getPwd().equals(password)){
+                    System.out.println("correct pwd!");
+                    if(user.getRole()==0){ resp = "USER"; }
+                    else{ resp = "ADMIN"; }
+                }
+                else{resp = "WRONGPWD";}
             }else{                  /*user不存在*/
-                pwd = "USERERROR";
+                resp = "NULL";
             }
 
-            out.print(pwd);
+            out.print(resp);
 
             out.flush();
             out.close();
             //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
-            tx.commit();
-            session.close();
+            //tx.commit();
+            //session.close();
         }
         catch (Exception ex) {
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             if ( ServletException.class.isInstance( ex ) ) {
                 throw ( ServletException ) ex;
             }
@@ -87,8 +94,8 @@ public class LogServlet extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-            Transaction tx = session.beginTransaction();
+            //Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            //Transaction tx = session.beginTransaction();
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
@@ -99,9 +106,11 @@ public class LogServlet extends HttpServlet {
             String email = (String) request.getParameter("email");
             String phone = (String) request.getParameter("phone");
 
-            User user = (User)HibernateUtil.getSessionFactory()
-                    .getCurrentSession().createQuery("from User where username = ? ")
-                    .setParameter(0,username).uniqueResult();
+            //User user = (User)HibernateUtil.getSessionFactory()
+            //        .getCurrentSession().createQuery("from User where username = ? ")
+            //        .setParameter(0,username).uniqueResult();
+            UserDao dao = new UserDao();
+            User user = dao.getByName(username);
             System.out.println(user);
 
             if (user != null){  /*user存在*/
@@ -116,19 +125,20 @@ public class LogServlet extends HttpServlet {
                 newuser.setEmail(email);
                 newuser.setPhone(phone);
                 System.out.println(newuser);
-                Serializable s =  session.save(newuser);
-                System.out.println(s);
+                dao.save(newuser);
+                //Serializable s =  session.save(newuser);
+                //System.out.println(s);
                 out.print("ADDUSER");
             }
-            tx.commit();
-            session.close();
+            //tx.commit();
+            //session.close();
             //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
             out.flush();
             out.close();
 
         }
         catch (Exception ex) {
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             if ( ServletException.class.isInstance( ex ) ) {
                 throw ( ServletException ) ex;
             }

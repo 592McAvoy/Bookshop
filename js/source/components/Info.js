@@ -5,7 +5,8 @@ class Info extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            isLog:false
+            isLog:false,
+            isAdmin:false
         };
     }
 
@@ -14,12 +15,23 @@ class Info extends React.Component{
             if(msg == "Log in"){
                 this.setState({isLog:true})
             } else if(msg == "Log out"){
-                this.setState({isLog:false});  
+                this.setState({
+                    isLog:false,
+                    isAdmin:false
+                });
             }         
+        });
+        this.eventEmitter1 = emitter.addListener("Admin",(msg)=>{
+            if(msg == "Admin"){
+                this.setState({isAdmin:true})
+            } else{
+                this.setState({isAdmin:false});
+            }
         });
     }
     componentWillUnmount(){
         emitter.removeListener(this.eventEmitter);
+        emitter.removeListener(this.eventEmitter1);
     }
 
     render(){
@@ -27,6 +39,15 @@ class Info extends React.Component{
             return ()=>{
                 emitter.emit("Page",msg)
             }
+        }
+        if(this.state.isAdmin){
+            return(
+                <div className="Info">
+                    <a href='#' onClick = {cb("ManageBook")}>Manage Book</a>
+                    <a href='#' onClick = {cb("ManageUser")}>Manage User</a>
+                    <a href='#' onClick = {cb("Log")}>Log out</a>
+                </div>
+            );
         }
         if(this.state.isLog){
             return(

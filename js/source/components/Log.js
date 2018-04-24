@@ -47,26 +47,6 @@ class Log extends React.Component{
     checkLog(e){
         e.preventDefault();
         alert("begin check log!\n");
-        /*
-        $.ajax({
-            url: "UserLog",
-            async: false,
-            data: "un="+this.state.userName,
-            type: "get",
-            success: function(pwd){
-                alert("Response!");
-
-                pwd = pwd.replace( /^\s+|\s+$/g, "" );
-                if(this.state.password.trim()==pwd.trim()){
-                    alert("correct password!\n");
-                    this.handleLog();
-                }else if(pwd.trim()=="USERERROR"){
-                    alert("user doesn't exist!")
-                }else{
-                    alert("false password!");
-                }
-            }.bind(this)
-        });*/
 
         var xmlhttp;
 
@@ -78,85 +58,69 @@ class Log extends React.Component{
         this.serverRequest = (xmlhttp.onreadystatechange = function() {
            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                alert("Response!");
-               var pwd = xmlhttp.responseText+"";
-               pwd = pwd.replace( /^\s+|\s+$/g, "" );
-               if(this.state.password.trim()==pwd.trim()){
-                   alert("correct password!\n");
+               var resp = xmlhttp.responseText+"";
+               resp = resp.replace( /^\s+|\s+$/g, "" );
+               if(resp.trim()=="USER"){
+                   alert("USER!\n");
                    this.handleLog();
-               }else if(pwd.trim()=="USERERROR"){
+               }else if(resp.trim()=="NULL"){
                    alert("user doesn't exist!")
-               }else{
+               }else if(resp.trim() == "WRONGPWD"){
                    alert("false password!");
+               }else{
+                   alert("Admin")
+                   this.handleAdmin();
                }
            }
         }.bind(this));
-        xmlhttp.open("GET", "UserLog?un="+this.state.userName, false);
+        xmlhttp.open("GET", "UserLog?un="+this.state.userName+"&pwd="+this.state.password, false);
         //console.log(xmlhttp);
         xmlhttp.send();
 
     }
     handleLog(){
-        //alert("I am called!");
         if(this.state.register){
-            console.log("validInfo: "+this.state.validInfo);
             if(!this.state.validInfo){
                 console.log("invalid validinfo");
                 return;
             }
         }
-
         this.setState({
             logIn:true,
             register:false
         });
-        //console.log("1");
+
         const cb = (msg) => {
             emitter.emit("Log",msg)
         }
         cb("Log in");
+
         alert("Welcome "+this.state.userName);
-        //console.log("2");
+
         const ca = (msg) => {
             emitter.emit("Page",msg)
         }
         ca("Homepage");
-        //console.log("3");
+
         const cn = (msg) => {
             emitter.emit("User",msg)
         }
         cn(this.state.userName);
-        //alert("log end! success!");
+    }
+    handleAdmin(){
+        this.setState({
+            logIn:true,
+            register:false
+        });
+        const ca = (msg) => {
+            emitter.emit("Admin",msg)
+        }
+        ca("Admin");
     }
 
     checkRegister(e){
         e.preventDefault();
         alert("begin check Register!\n");
-        /*
-        $.ajax({
-            url: "UserLog",
-            async: false,
-            data: "user="+this.state.userName+"&pwd="+this.state.password+"&email="+this.state.emailAddr+"&phone="+this.state.phoneNum,
-            type: "post",
-            success: function(pwd){
-                alert("regResponse!");
-                //var pwd = xmlhttp.responseText+"";
-                pwd = pwd.replace( /^\s+|\s+$/g, "" );
-                if(pwd.trim()=="ADDUSER"){
-                    alert("add!");
-                    this.setState({
-                        validUser:true,
-                        validInfo:true
-                    }, ()=>{
-                        this.handleLog(); //new
-                    });
-
-                }else {
-                    alert("invalid user");
-                    this.setState({validUser:false});
-                }
-            }.bind(this)
-        });*/
-
         var xmlhttp;
 
         if (window.XMLHttpRequest) {
@@ -265,12 +229,12 @@ class Log extends React.Component{
     }
     renderLog(){
         if(this.state.logIn){
-        return (
-            <div>
-            <p>Welcome{" "}{this.state.userName}!</p>
-            <button onClick={this.handleLogOut}> Log out</button>
-            </div>
-                );
+            return (
+                <div>
+                <p>Welcome{" "}{this.state.userName}!</p>
+                <button onClick={this.handleLogOut}> Log out</button>
+                </div>
+            );
         }
         if(this.state.register){
             return (

@@ -2,6 +2,7 @@ package bookshop.Servlet;
 
 import bookshop.Entity.Book;
 import bookshop.Util.HibernateUtil;
+import bookshop.Dao.BookDao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,32 +41,30 @@ public class BookServlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+            //HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
             System.out.println("This is a book manager");
 
-            List<Book> result = HibernateUtil.getSessionFactory()
-                    .getCurrentSession().createQuery("from Book").list();
+            //List<Book> result = HibernateUtil.getSessionFactory()
+            //        .getCurrentSession().createQuery("from Book").list();
+            BookDao dao = new BookDao();
+            List<Book> result = dao.findAll();
             System.out.println("normal here!\n");
             Iterator<Book> it = result.iterator();
 
             ArrayList<JSONObject> booksJson = new ArrayList<JSONObject>();
             while (it.hasNext()) {
                 Book book = (Book) it.next();
-                System.out.println(book);
+                //System.out.println(book);
                 JSONObject obj = new JSONObject();
-                System.out.println("1\n");
                 obj.put("category",book.getCategory());
-                System.out.println("2\n");
                 obj.put("title",book.getTitle());
                 obj.put("auther",book.getAuther());
-                System.out.println("3\n");
                 obj.put("price",book.getPrice());
                 obj.put("publish",book.getPublish());
                 obj.put("stock",book.getStock());
-                System.out.println("4\n");
                 obj.put("img",book.getImg());
 
                 System.out.println(obj.toString());
@@ -79,10 +78,10 @@ public class BookServlet extends HttpServlet {
             out.println(books);
             out.flush();
             out.close();
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
         }
         catch (Exception ex) {
-            HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             if ( ServletException.class.isInstance( ex ) ) {
                 throw ( ServletException ) ex;
             }
