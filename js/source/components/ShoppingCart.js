@@ -102,7 +102,7 @@ class ShoppingCart extends React.Component{
         for(var i=0;i<len;i++){
             var item = Object();
             item.title = list[i].title;
-            item.auther = list[i].auther;
+            item.author = list[i].author;
             item.price = list[i].price;
             item.amount = record[i];
             item.cost = list[i].price * record[i];

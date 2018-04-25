@@ -809,8 +809,8 @@ var data = localStorage.getItem('data');
 
 if (!headers) {
   category = ['Poem', 'Fiction', 'Story', 'Textbook'];
-  headers = ['title', 'auther', 'price', 'publish', '        '];
-  data = [{ category: "Poem", title: "Ice Rain", auther: "Alan", price: 21, publish: 2001, stock: 13 }, { category: "Poem", title: "Homeland", auther: "Mimi", price: 44, publish: 2011, stock: 6 }, { category: "Fiction", title: "Cut me off", auther: "Alan", price: 92, publish: 2008, stock: 2 }, { category: "Story", title: "Grind me down", auther: "BBan", price: 67, publish: 2000, stock: 9 }, { category: "Fiction", title: "Moon river", auther: "BBan", price: 127, publish: 2004, stock: 5 }, { category: "Poem", title: "Your hair", auther: "Alan", price: 27, publish: 2014, stock: 14 }, { category: "Poem", title: "Homeland2", auther: "Mimi", price: 44, publish: 2013, stock: 9 }, { category: "Fiction", title: "Shinning", auther: "Corn", price: 112, publish: 2003, stock: 6 }, { category: "Story", title: "Song to you", auther: "CanCan", price: 45, publish: 2010, stock: 9 }, { category: "Textbook", title: "CSSAPP", auther: "Yuanzhang", price: 227, publish: 2014, stock: 5 }, { category: "Textbook", title: "Database System", auther: "JBoss", price: 149, publish: 2017, stock: 14 }, { category: "Poem", title: "Kitty", auther: "ling", price: 84, publish: 2013, stock: 2 }, { category: "Story", title: "Code code", auther: "Fanni", price: 134, publish: 2015, stock: 3 }];
+  headers = ['title', 'author', 'price', 'publish', '        '];
+  data = [{ category: "Poem", title: "Ice Rain", author: "Alan", price: 21, publish: 2001, stock: 13 }, { category: "Poem", title: "Homeland", author: "Mimi", price: 44, publish: 2011, stock: 6 }, { category: "Fiction", title: "Cut me off", author: "Alan", price: 92, publish: 2008, stock: 2 }, { category: "Story", title: "Grind me down", author: "BBan", price: 67, publish: 2000, stock: 9 }, { category: "Fiction", title: "Moon river", auther: "BBan", price: 127, publish: 2004, stock: 5 }, { category: "Poem", title: "Your hair", auther: "Alan", price: 27, publish: 2014, stock: 14 }, { category: "Poem", title: "Homeland2", auther: "Mimi", price: 44, publish: 2013, stock: 9 }, { category: "Fiction", title: "Shinning", auther: "Corn", price: 112, publish: 2003, stock: 6 }, { category: "Story", title: "Song to you", auther: "CanCan", price: 45, publish: 2010, stock: 9 }, { category: "Textbook", title: "CSSAPP", auther: "Yuanzhang", price: 227, publish: 2014, stock: 5 }, { category: "Textbook", title: "Database System", auther: "JBoss", price: 149, publish: 2017, stock: 14 }, { category: "Poem", title: "Kitty", auther: "ling", price: 84, publish: 2013, stock: 2 }, { category: "Story", title: "Code code", auther: "Fanni", price: 134, publish: 2015, stock: 3 }];
 }
 
 _reactDom2.default.render(_react2.default.createElement(
@@ -877,10 +877,11 @@ var BookTable = function (_React$Component) {
         _this.clearSelect = _this.clearSelect.bind(_this);
         _this.handleSort = _this.handleSort.bind(_this);
         _this.addItem = _this.addItem.bind(_this);
+        _this.doFresh = _this.doFresh.bind(_this);
 
         _this.state = {
             load: true,
-            data: _this.props.initialData,
+            data: [],
             preData: null,
             category: "Poem",
             searchIdx: "",
@@ -959,6 +960,22 @@ var BookTable = function (_React$Component) {
             );
         }
     }, {
+        key: "doFresh",
+        value: function doFresh(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "getBook",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    alert("bookResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
+            });
+        }
+    }, {
         key: "handleChange",
         value: function handleChange(e) {
             var newIdx = e.target.value;
@@ -982,7 +999,7 @@ var BookTable = function (_React$Component) {
             var oldData = this.state.preData;
             var searchData = oldData.filter(function (row) {
                 var idx = this.state.searchIdx;
-                return row.title.indexOf(idx) > -1 || row.auther.indexOf(idx) > -1;
+                return row.title.indexOf(idx) > -1 || row.author.indexOf(idx) > -1;
             }, this);
             this.setState({ data: searchData });
         }
@@ -1096,6 +1113,11 @@ var BookTable = function (_React$Component) {
                         "button",
                         { onClick: this.handleSeniorSearch },
                         this.state.seniorSearch ? "/\\" : "\\/"
+                    ),
+                    _react2.default.createElement(
+                        "button",
+                        { onClick: this.doFresh },
+                        "Fresh"
                     )
                 ),
                 senior
@@ -1180,7 +1202,7 @@ var BookTable = function (_React$Component) {
                             _react2.default.createElement(
                                 "td",
                                 null,
-                                row.auther
+                                row.author
                             ),
                             _react2.default.createElement(
                                 "td",
@@ -1881,8 +1903,40 @@ var ManageBook = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (ManageBook.__proto__ || Object.getPrototypeOf(ManageBook)).call(this, props));
 
+        _this.changeId = _this.changeId.bind(_this);
+        _this.changeCate = _this.changeCate.bind(_this);
+        _this.changeTitle = _this.changeTitle.bind(_this);
+        _this.changeAuthor = _this.changeAuthor.bind(_this);
+        _this.changePrice = _this.changePrice.bind(_this);
+        _this.changePublish = _this.changePublish.bind(_this);
+        _this.changeStock = _this.changeStock.bind(_this);
+        _this.changeImg = _this.changeImg.bind(_this);
+        _this.doModify = _this.doModify.bind(_this);
+        _this.doEdit = _this.doEdit.bind(_this);
+        _this.doDelete = _this.doDelete.bind(_this);
+        _this.doAdd = _this.doAdd.bind(_this);
+        _this.changeSearch = _this.changeSearch.bind(_this);
+        _this.changeSelectIdx = _this.changeSelectIdx.bind(_this);
+        _this.search = _this.search.bind(_this);
+        _this.fresh = _this.fresh.bind(_this);
+
         _this.state = {
-            load: false
+            load: false,
+            edit: false,
+            editrow: 0,
+            data: [],
+            header: ["id", "category", "title", "author", "price", "publish", "stock", "img"],
+            id: 0,
+            category: "",
+            title: "",
+            author: "",
+            price: 0,
+            publish: 0,
+            stock: 0,
+            img: "",
+            selectIdx: "Id",
+            searchIdx: 0,
+            predata: null
         };
         return _this;
     }
@@ -1893,13 +1947,26 @@ var ManageBook = function (_React$Component) {
             var _this2 = this;
 
             this.eventEmitter = _event2.default.addListener("Page", function (msg) {
-                if (msg == "ManageBook") {
+                console.log(msg);
+                if (msg === "ManageBook") {
                     _this2.setState({ load: true });
                 } else {
                     _this2.setState({
                         load: false
                     });
                 }
+            });
+
+            $.ajax({
+                url: "manageBook",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    alert("manageBookGetResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
             });
         }
     }, {
@@ -1908,13 +1975,508 @@ var ManageBook = function (_React$Component) {
             _event2.default.removeListener(this.eventEmitter);
         }
     }, {
+        key: "doEdit",
+        value: function doEdit(e) {
+            var row = parseInt(e.target.dataset.row, 10);
+            var data = this.state.data[row];
+            this.setState({
+                edit: true,
+                editrow: row,
+                id: data.id,
+                category: data.category,
+                title: data.title,
+                author: data.author,
+                price: data.price,
+                publish: data.publish,
+                stock: data.stock,
+                img: data.img
+            });
+        }
+    }, {
+        key: "changeId",
+        value: function changeId(e) {
+            var id = e.target.value;
+            this.setState({ id: id });
+        }
+    }, {
+        key: "changeCate",
+        value: function changeCate(e) {
+            var cate = e.target.value;
+            this.setState({ category: cate });
+        }
+    }, {
+        key: "changePrice",
+        value: function changePrice(e) {
+            var r = parseInt(e.target.value, 10);
+            this.setState({ price: r });
+        }
+    }, {
+        key: "changeAuthor",
+        value: function changeAuthor(e) {
+            var p = e.target.value;
+            this.setState({ author: p });
+        }
+    }, {
+        key: "changeTitle",
+        value: function changeTitle(e) {
+            var a = e.target.value;
+            this.setState({ title: a });
+        }
+    }, {
+        key: "changePublish",
+        value: function changePublish(e) {
+            var s = parseInt(e.target.value, 10);
+            this.setState({ publish: s });
+        }
+    }, {
+        key: "changeStock",
+        value: function changeStock(e) {
+            var s = parseInt(e.target.value, 10);
+            this.setState({ stock: s });
+        }
+    }, {
+        key: "changeImg",
+        value: function changeImg(e) {
+            var a = e.target.value;
+            this.setState({ img: a });
+        }
+    }, {
+        key: "doModify",
+        value: function doModify(e) {
+            $.ajax({
+                url: "manageBook",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "update",
+                    id: this.state.id + "",
+                    category: this.state.category,
+                    title: this.state.title,
+                    author: this.state.author,
+                    price: this.state.price + "",
+                    publish: this.state.publish + "",
+                    stock: this.state.stock + "",
+                    img: this.state.img
+                },
+                success: function () {
+                    alert("manageBookModifyResponse!");
+                }.bind(this)
+            });
+
+            var data = this.state.data;
+            var row = {};
+            row.id = this.state.id;
+            row.category = this.state.category;
+            row.title = this.state.title;
+            row.author = this.state.author;
+            row.price = this.state.price;
+            row.publish = this.state.publish;
+            row.stock = this.state.stock;
+            row.img = this.state.img;
+            data[this.state.editrow] = row;
+
+            this.setState({
+                edit: false,
+                data: data
+            });
+        }
+    }, {
+        key: "doDelete",
+        value: function doDelete(e) {
+            var data = this.state.data;
+            var idx = parseInt(e.target.dataset.row, 10);
+            var row = data[idx];
+
+            $.ajax({
+                url: "manageBook",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "delete",
+                    id: row.id + ""
+                },
+                success: function () {
+                    alert("manageBookDeleteResponse!");
+                }.bind(this)
+            });
+
+            data.splice(idx, 1);
+            this.setState({
+                data: data
+            });
+        }
+    }, {
+        key: "doAdd",
+        value: function doAdd(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "manageBook",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "insert",
+                    id: this.state.id + "",
+                    category: this.state.category,
+                    title: this.state.title,
+                    author: this.state.author,
+                    price: this.state.price + "",
+                    publish: this.state.publish + "",
+                    stock: this.state.stock + "",
+                    img: this.state.img
+                },
+                success: function () {
+                    alert("manageBookAddResponse!");
+                }.bind(this)
+            });
+            var data = this.state.data;
+            var row = {};
+            row.id = this.state.id;
+            row.category = this.state.category;
+            row.title = this.state.title;
+            row.author = this.state.author;
+            row.price = this.state.price;
+            row.publish = this.state.publish;
+            row.stock = this.state.stock;
+            row.img = this.state.img;
+            if (data.indexOf(row) < 0) {
+                data.push(row);
+            }
+            this.setState({
+                data: data
+            });
+        }
+    }, {
+        key: "changeSearch",
+        value: function changeSearch(e) {
+            var idx = e.target.value;
+            this.setState({ searchIdx: idx });
+        }
+    }, {
+        key: "search",
+        value: function search(e) {
+            e.preventDefault();
+            var data;
+            var select = this.state.selectIdx;
+            var idx = this.state.searchIdx;
+
+            if (this.state.predata == null) {
+                console.log("predata: " + this.state.predata);
+                data = this.state.data;
+                this.setState({ predata: data });
+            } else {
+                data = this.state.predata;
+            }
+            console.log("data: " + data);
+            if (idx !== "") {
+                if (select === "Id") {
+                    var id = parseInt(idx, 10);
+                    var newdata = data.filter(function (row) {
+                        return row.id == id;
+                    }, this);
+                } else {
+                    var newdata = data.filter(function (row) {
+                        return row.title.indexOf(idx) > -1;
+                    }, this);
+                }
+                this.setState({ data: newdata });
+            } else {
+                console.log("reach here");
+                var data = this.state.predata;
+                if (data != null) {
+                    this.setState({
+                        data: data,
+                        predata: null
+                    });
+                }
+            }
+        }
+    }, {
+        key: "fresh",
+        value: function fresh(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "manageBook",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    alert("manageBookFreshResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
+            });
+        }
+    }, {
+        key: "changeSelectIdx",
+        value: function changeSelectIdx(e) {
+            this.setState({ selectIdx: e.target.value });
+        }
+    }, {
+        key: "renderSearch",
+        value: function renderSearch() {
+            console.log("renderSearch");
+            return _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "select",
+                    { value: this.state.selectIdx, onChange: this.changeSelectIdx },
+                    _react2.default.createElement(
+                        "option",
+                        { value: "Id" },
+                        "Id"
+                    ),
+                    _react2.default.createElement(
+                        "option",
+                        { value: "Title" },
+                        "Title"
+                    )
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    this.state.selectIdx + ": ",
+                    _react2.default.createElement("input", { type: "text", value: this.state.searchIdx, onChange: this.changeSearch })
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.search },
+                    "search"
+                )
+            );
+        }
+    }, {
+        key: "renderAdd",
+        value: function renderAdd() {
+            return _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "category:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.category,
+                        onChange: this.changeCate })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "title:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.title,
+                        onChange: this.changeTitle })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "author:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.author,
+                        onChange: this.changeAuthor })
+                ),
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "price:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.price,
+                        onChange: this.changePrice })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "publish:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.publish,
+                        onChange: this.changePublish })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "stock:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.stock,
+                        onChange: this.changeStock })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "img:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.img,
+                        onChange: this.changeImg })
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.doAdd },
+                    "add"
+                )
+            );
+        }
+    }, {
+        key: "renderTable",
+        value: function renderTable() {
+            return _react2.default.createElement(
+                "table",
+                null,
+                _react2.default.createElement(
+                    "thead",
+                    null,
+                    _react2.default.createElement(
+                        "tr",
+                        null,
+                        this.state.header.map(function (title, idx) {
+                            return _react2.default.createElement(
+                                "th",
+                                { key: idx },
+                                title
+                            );
+                        }, this),
+                        _react2.default.createElement(
+                            "th",
+                            null,
+                            _react2.default.createElement(
+                                "button",
+                                { onClick: this.fresh },
+                                "fresh"
+                            )
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    "tbody",
+                    null,
+                    this.state.data.map(function (row, idx) {
+                        if (this.state.edit && this.state.editrow === idx) {
+                            return _react2.default.createElement(
+                                "tr",
+                                { key: idx },
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.id,
+                                        onChange: this.changeId })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.category,
+                                        onChange: this.changeCate })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.title,
+                                        onChange: this.changeTitle })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.author,
+                                        onChange: this.changeAuthor })
+                                ),
+                                _react2.default.createElement(
+                                    "label",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.price,
+                                        onChange: this.changePrice })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.publish,
+                                        onChange: this.changePublish })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.stock,
+                                        onChange: this.changeStock })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement("input", { type: "text", value: this.state.img,
+                                        onChange: this.changeImg })
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "button",
+                                        { "data-row": idx, onClick: this.doModify },
+                                        "OK"
+                                    )
+                                )
+                            );
+                        } else {
+                            return _react2.default.createElement(
+                                "tr",
+                                { key: idx, "data-row": idx, onDoubleClick: this.doEdit },
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.id
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.category
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.title
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.author
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.price
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.publish
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.stock
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.img
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "button",
+                                        { "data-row": idx, onClick: this.doDelete },
+                                        "delete"
+                                    )
+                                )
+                            );
+                        }
+                    }, this)
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             if (this.state.load) {
+                var table = this.renderTable();
+                var search = this.renderSearch();
+                var add = this.renderAdd();
                 return _react2.default.createElement(
                     "div",
                     { className: "ManageBook" },
-                    "book manager"
+                    search,
+                    _react2.default.createElement("br", null),
+                    add,
+                    table
                 );
             } else {
                 return _react2.default.createElement("div", null);
@@ -2166,8 +2728,9 @@ var ManageUser = function (_React$Component) {
             row.phone = this.state.phone;
             row.email = this.state.email;
             row.state = this.state.sta;
-            data.push(row);
-
+            if (data.indexOf(row) < 0) {
+                data.push(row);
+            }
             this.setState({
                 data: data
             });
@@ -2968,12 +3531,12 @@ var UserInfo = function (_React$Component) {
                                     null,
                                     row.content.map(function (rr, idx) {
                                         var title = "<<" + rr.title + ">>";
-                                        var auther = rr.auther;
+                                        var author = rr.author;
                                         var price = "$" + rr.price;
                                         return _react2.default.createElement(
                                             "li",
                                             { key: idx },
-                                            title + " -- By " + rr.auther + " ---- " + price + " * " + rr.amount + " = $" + rr.cost
+                                            title + " -- By " + rr.author + " ---- " + price + " * " + rr.amount + " = $" + rr.cost
                                         );
                                     }, _this3)
                                 )

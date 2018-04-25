@@ -60,7 +60,7 @@ public class BookServlet extends HttpServlet {
                 JSONObject obj = new JSONObject();
                 obj.put("category",book.getCategory());
                 obj.put("title",book.getTitle());
-                obj.put("auther",book.getAuther());
+                obj.put("author",book.getAuthor());
                 obj.put("price",book.getPrice());
                 obj.put("publish",book.getPublish());
                 obj.put("stock",book.getStock());

@@ -5,7 +5,7 @@ public class Book {
 
     private String category;
     private String title;
-    private String auther;
+    private String author;
     private Integer price;
     private Integer publish;
     private Integer stock;
@@ -38,12 +38,12 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuther() {
-        return auther;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAuther(String author) {
-        this.auther = author;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public Integer getPrice() {
@@ -72,7 +72,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "[Book: title=" + title + ", category=" + category + ", auther=" + auther +" balabala]\n";
+        return "[Book: title=" + title + ", category=" + category + ", author=" + author +" balabala]\n";
     }
 
 }

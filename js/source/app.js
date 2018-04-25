@@ -19,12 +19,12 @@ var data = localStorage.getItem('data');
 
 if (!headers) {
   category = ['Poem', 'Fiction', 'Story','Textbook'];
-  headers = ['title','auther','price','publish','        '];
+  headers = ['title','author','price','publish','        '];
   data = [
-    {category:"Poem",title:"Ice Rain",auther:"Alan",price:21,publish:2001,stock:13},
-    {category:"Poem",title:"Homeland",auther:"Mimi",price:44,publish:2011,stock:6},
-    {category:"Fiction",title:"Cut me off",auther:"Alan",price:92,publish:2008,stock:2},
-    {category:"Story",title:"Grind me down",auther:"BBan",price:67,publish:2000,stock:9},
+    {category:"Poem",title:"Ice Rain",author:"Alan",price:21,publish:2001,stock:13},
+    {category:"Poem",title:"Homeland",author:"Mimi",price:44,publish:2011,stock:6},
+    {category:"Fiction",title:"Cut me off",author:"Alan",price:92,publish:2008,stock:2},
+    {category:"Story",title:"Grind me down",author:"BBan",price:67,publish:2000,stock:9},
     {category:"Fiction",title:"Moon river",auther:"BBan",price:127,publish:2004,stock:5},
     {category:"Poem",title:"Your hair",auther:"Alan",price:27,publish:2014,stock:14},
     {category:"Poem",title:"Homeland2",auther:"Mimi",price:44,publish:2013,stock:9},
@@ -44,7 +44,7 @@ ReactDOM.render(
       <Info/>
     </div>
     <div className="content">
-      <BookTable category={category} headers={headers} initialData={data}/>
+      <BookTable category={category} headers={headers}/>
       <ShoppingCart/>
       <UserInfo/>
       <Log/>

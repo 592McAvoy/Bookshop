@@ -16,10 +16,11 @@ class BookTable extends React.Component{
         this.clearSelect = this.clearSelect.bind(this);
         this.handleSort = this.handleSort.bind(this);
         this.addItem = this.addItem.bind(this);
+        this.doFresh = this.doFresh.bind(this);
 
         this.state = {
             load:true,
-            data: this.props.initialData,
+            data: [],
             preData:null,
             category:"Poem",
             searchIdx:"",
@@ -84,7 +85,21 @@ class BookTable extends React.Component{
         );
     }
 
-    
+    doFresh(e){
+        e.preventDefault();
+        $.ajax({
+            url: "getBook",
+            async: true,
+            type: "get",
+            success: function(data){
+                alert("bookResponse!");
+                this.setState({
+                    data: JSON.parse(data),
+                });
+            }.bind(this)
+        });
+    }
+
     handleChange(e){
         var newIdx = e.target.value;
         this.setState({searchIdx:newIdx});
@@ -104,7 +119,7 @@ class BookTable extends React.Component{
         var searchData = oldData.filter(function(row){
             var idx = this.state.searchIdx;
             return(
-                (row.title.indexOf(idx)>-1)||(row.auther.indexOf(idx)>-1)
+                (row.title.indexOf(idx)>-1)||(row.author.indexOf(idx)>-1)
             );
         },this);
         this.setState({data:searchData});
@@ -183,6 +198,7 @@ class BookTable extends React.Component{
                     onChange={this.handleChange} />
                     <input id='i2' type="submit" value="Search" />
                     <button onClick={this.handleSeniorSearch}>{this.state.seniorSearch?"/\\":"\\/"}</button>
+                    <button onClick={this.doFresh}>Fresh</button>
                 </form> 
                 {senior}
             </div>
@@ -246,7 +262,7 @@ class BookTable extends React.Component{
                             return(
                                 <tr key={idx}>
                                     <td>{row.title}</td>
-                                    <td>{row.auther}</td>
+                                    <td>{row.author}</td>
                                     <td>{"$"}{row.price}</td>
                                     <td>{row.publish}</td>
                                     <td><a data-row={idx} href='#' onClick={this.addItem}>Add</a></td>

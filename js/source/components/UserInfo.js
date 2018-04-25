@@ -106,10 +106,10 @@ class UserInfo extends React.Component{
                                             {
                                                 row.content.map((rr,idx)=>{
                                                     var title = "<<"+rr.title+">>";
-                                                    var auther = rr.auther;
+                                                    var author = rr.author;
                                                     var price = "$"+rr.price;
                                                     return(
-                                                        <li key={idx}>{title+" -- By "+rr.auther+" ---- "+price+" * "+rr.amount+" = $"+rr.cost}</li>
+                                                        <li key={idx}>{title+" -- By "+rr.author+" ---- "+price+" * "+rr.amount+" = $"+rr.cost}</li>
                                                     )
                                                 },this)
                                             }

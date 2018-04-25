@@ -11,7 +11,7 @@
         </id>
         <property name="category" />
         <property name="title" />
-        <property name="auther" />
+        <property name="author" />
         <property name="price" />
         <property name="publish" />
         <property name="stock" />
