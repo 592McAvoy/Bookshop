@@ -8,6 +8,7 @@ public class User {
     private Integer role;
     private String email;
     private String phone;
+    private Integer state;
 
 
     public User() {}
@@ -50,6 +51,14 @@ public class User {
     
     public void setPhone(String p) {
         this.phone = p;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer r) {
+        this.state = r;
     }
 
     @Override

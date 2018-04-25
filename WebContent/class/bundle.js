@@ -1423,8 +1423,8 @@ var Log = function (_React$Component) {
             load: false,
             logIn: false,
             register: false,
-            userName: "my friend",
-            password: "",
+            userName: "Admin",
+            password: "a12345",
             phoneNum: "",
             emailAddr: "",
             validUser: true,
@@ -1959,8 +1959,34 @@ var ManageUser = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (ManageUser.__proto__ || Object.getPrototypeOf(ManageUser)).call(this, props));
 
+        _this.changeEmail = _this.changeEmail.bind(_this);
+        _this.changeName = _this.changeName.bind(_this);
+        _this.changePhone = _this.changePhone.bind(_this);
+        _this.changePwd = _this.changePwd.bind(_this);
+        _this.changeRole = _this.changeRole.bind(_this);
+        _this.changeSta = _this.changeSta.bind(_this);
+        _this.doModify = _this.doModify.bind(_this);
+        _this.doEdit = _this.doEdit.bind(_this);
+        _this.doDelete = _this.doDelete.bind(_this);
+        _this.doAdd = _this.doAdd.bind(_this);
+        _this.changeSearch = _this.changeSearch.bind(_this);
+        _this.search = _this.search.bind(_this);
+        _this.fresh = _this.fresh.bind(_this);
+
         _this.state = {
-            load: false
+            load: false,
+            edit: false,
+            editrow: 0,
+            data: [],
+            title: ["username", "pwd", "role", "email", "phone", "state"],
+            name: "",
+            pwd: "",
+            role: 0,
+            phone: "",
+            email: "",
+            sta: 0,
+            searchIdx: "",
+            predata: null
         };
         return _this;
     }
@@ -1980,6 +2006,18 @@ var ManageUser = function (_React$Component) {
                     });
                 }
             });
+
+            $.ajax({
+                url: "manageUser",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    alert("manageUserGetResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
+            });
         }
     }, {
         key: "componentWillUnmount",
@@ -1987,13 +2025,451 @@ var ManageUser = function (_React$Component) {
             _event2.default.removeListener(this.eventEmitter);
         }
     }, {
+        key: "doEdit",
+        value: function doEdit(e) {
+            var row = parseInt(e.target.dataset.row, 10);
+            var data = this.state.data[row];
+            this.setState({
+                edit: true,
+                editrow: row,
+                name: data.username,
+                pwd: data.pwd,
+                role: data.role,
+                phone: data.phone,
+                email: data.email,
+                sta: data.state
+            });
+        }
+    }, {
+        key: "changeName",
+        value: function changeName(e) {
+            var name = e.target.value;
+            this.setState({ name: name });
+        }
+    }, {
+        key: "changePwd",
+        value: function changePwd(e) {
+            var pwd = e.target.value;
+            this.setState({ pwd: pwd });
+        }
+    }, {
+        key: "changeRole",
+        value: function changeRole(e) {
+            var r = parseInt(e.target.value, 10);
+            this.setState({ role: r });
+        }
+    }, {
+        key: "changePhone",
+        value: function changePhone(e) {
+            var p = e.target.value;
+            this.setState({ phone: p });
+        }
+    }, {
+        key: "changeEmail",
+        value: function changeEmail(e) {
+            var e = e.target.value;
+            this.setState({ email: e });
+        }
+    }, {
+        key: "changeSta",
+        value: function changeSta(e) {
+            var s = parseInt(e.target.value, 10);
+            this.setState({ sta: s });
+        }
+    }, {
+        key: "doModify",
+        value: function doModify(e) {
+            $.ajax({
+                url: "manageUser",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "update",
+                    username: this.state.name,
+                    pwd: this.state.pwd,
+                    role: this.state.role + "",
+                    phone: this.state.phone,
+                    email: this.state.email,
+                    state: this.state.sta + ""
+                },
+                success: function () {
+                    alert("manageUserModifyResponse!");
+                }.bind(this)
+            });
+
+            var data = this.state.data;
+            var row = {};
+            row.username = this.state.name;
+            row.pwd = this.state.pwd;
+            row.role = this.state.role;
+            row.phone = this.state.phone;
+            row.email = this.state.email;
+            row.state = this.state.sta;
+            data[this.state.editrow] = row;
+
+            this.setState({
+                edit: false,
+                data: data
+            });
+        }
+    }, {
+        key: "doDelete",
+        value: function doDelete(e) {
+            var data = this.state.data;
+            var idx = parseInt(e.target.dataset.row, 10);
+            var row = data[idx];
+
+            $.ajax({
+                url: "manageUser",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "delete",
+                    username: row.username
+                },
+                success: function () {
+                    alert("manageUserDeleteResponse!");
+                }.bind(this)
+            });
+
+            data.splice(idx, 1);
+            this.setState({
+                data: data
+            });
+        }
+    }, {
+        key: "doAdd",
+        value: function doAdd(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "manageUser",
+                async: true,
+                type: "post",
+                data: {
+                    operation: "insert",
+                    username: this.state.name,
+                    pwd: this.state.pwd,
+                    role: this.state.role + "",
+                    phone: this.state.phone,
+                    email: this.state.email,
+                    state: this.state.sta + ""
+                },
+                success: function () {
+                    alert("manageUserAddResponse!");
+                }.bind(this)
+            });
+            var data = this.state.data;
+            var row = {};
+            row.username = this.state.name;
+            row.pwd = this.state.pwd;
+            row.role = this.state.role;
+            row.phone = this.state.phone;
+            row.email = this.state.email;
+            row.state = this.state.sta;
+            data.push(row);
+
+            this.setState({
+                data: data
+            });
+        }
+    }, {
+        key: "changeSearch",
+        value: function changeSearch(e) {
+            var idx = e.target.value;
+            this.setState({ searchIdx: idx });
+        }
+    }, {
+        key: "search",
+        value: function search(e) {
+            e.preventDefault();
+            var data;
+            var idx = this.state.searchIdx;
+            console.log("searchIdx: " + idx);
+            if (this.state.predata == null) {
+                console.log("predata: " + this.state.predata);
+                data = this.state.data;
+                this.setState({ predata: data });
+            } else {
+                data = this.state.predata;
+            }
+            console.log("data: " + data);
+            if (idx !== "") {
+                var newdata = data.filter(function (row) {
+                    return row.username.indexOf(idx) > -1;
+                }, this);
+                this.setState({ data: newdata });
+            } else {
+                console.log("reach here");
+                var data = this.state.predata;
+                if (data != null) {
+                    this.setState({
+                        data: data,
+                        predata: null
+                    });
+                }
+            }
+        }
+    }, {
+        key: "fresh",
+        value: function fresh(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "manageUser",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    alert("manageUserFreshResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
+            });
+        }
+    }, {
+        key: "renderSearch",
+        value: function renderSearch() {
+            console.log("renderSearch");
+            return _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "Username:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.searchIdx, onChange: this.changeSearch })
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.search },
+                    "search"
+                )
+            );
+        }
+    }, {
+        key: "renderAdd",
+        value: function renderAdd() {
+            return _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "username:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.name,
+                        onChange: this.changeName })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "pwd:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.pwd,
+                        onChange: this.changePwd })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "role:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.role,
+                        onChange: this.changeRole })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "email:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.email,
+                        onChange: this.changeEmail })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "phone:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.phone,
+                        onChange: this.changePhone })
+                ),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "state:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.sta,
+                        onChange: this.changeSta })
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.doAdd },
+                    "add"
+                )
+            );
+        }
+    }, {
+        key: "renderTable",
+        value: function renderTable() {
+            return _react2.default.createElement(
+                "table",
+                null,
+                _react2.default.createElement(
+                    "thead",
+                    null,
+                    _react2.default.createElement(
+                        "tr",
+                        null,
+                        this.state.title.map(function (title, idx) {
+                            return _react2.default.createElement(
+                                "th",
+                                { key: idx },
+                                title
+                            );
+                        }, this),
+                        _react2.default.createElement(
+                            "th",
+                            null,
+                            _react2.default.createElement(
+                                "button",
+                                { onClick: this.fresh },
+                                "fresh"
+                            )
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    "tbody",
+                    null,
+                    this.state.data.map(function (row, idx) {
+                        if (this.state.edit && this.state.editrow === idx) {
+                            return _react2.default.createElement(
+                                "tr",
+                                { key: idx },
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.name,
+                                            onChange: this.changeName })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.pwd,
+                                            onChange: this.changePwd })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.role,
+                                            onChange: this.changeRole })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.email,
+                                            onChange: this.changeEmail })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.phone,
+                                            onChange: this.changePhone })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "form",
+                                        null,
+                                        _react2.default.createElement("input", { type: "text", value: this.state.sta,
+                                            onChange: this.changeSta })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "button",
+                                        { "data-row": idx, onClick: this.doModify },
+                                        "OK"
+                                    )
+                                )
+                            );
+                        } else {
+                            return _react2.default.createElement(
+                                "tr",
+                                { key: idx, "data-row": idx, onDoubleClick: this.doEdit },
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.username
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.pwd
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.role
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.email
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.phone
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    { "data-row": idx },
+                                    row.state
+                                ),
+                                _react2.default.createElement(
+                                    "td",
+                                    null,
+                                    _react2.default.createElement(
+                                        "button",
+                                        { "data-row": idx, onClick: this.doDelete },
+                                        "delete"
+                                    )
+                                )
+                            );
+                        }
+                    }, this)
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             if (this.state.load) {
+                var table = this.renderTable();
+                var search = this.renderSearch();
+                var add = this.renderAdd();
                 return _react2.default.createElement(
                     "div",
                     { className: "ManageUser" },
-                    "user manager"
+                    search,
+                    add,
+                    table
                 );
             } else {
                 return _react2.default.createElement("div", null);

@@ -124,6 +124,7 @@ public class LogServlet extends HttpServlet {
                 newuser.setRole(0);
                 newuser.setEmail(email);
                 newuser.setPhone(phone);
+                newuser.setState(0);
                 System.out.println(newuser);
                 dao.save(newuser);
                 //Serializable s =  session.save(newuser);

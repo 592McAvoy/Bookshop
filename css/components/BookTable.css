@@ -61,14 +61,14 @@ select{
   width: inherit;
 }
 
-.BookTable table {
+table {
   width: 700px;
   border: 1px solid black;
   margin: 0 auto;
   float: right;
 
 }
-.BookTable td {
+td {
   border-top: 1px solid black;
   cursor: cell;
   padding: 5px;
@@ -79,11 +79,19 @@ select{
 }
 
 
-.BookTable th {
+th {
   cursor: pointer;
   padding: 5px;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   font-size:20px;
+}
+
+.ManageUser table{
+  margin-top: 130px;
+  margin-left: 40px;
+}
+.ManageUser input{
+  width: 100px;
 }
 
 

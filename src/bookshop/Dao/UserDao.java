@@ -51,13 +51,14 @@ public class UserDao {
     /*
      * 删除
      */
-    public void delete(int id) {
+    public void delete(String name) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            Object user = session.get(User.class, id); // 要先获取到这个对象
+            Object user = (User) session.createQuery("from User where username = ? ")
+                    .setParameter(0,name).uniqueResult(); // 要先获取到这个对象
             session.delete(user); // 删除的是实体对象
 
             tx.commit();

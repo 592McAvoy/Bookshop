@@ -41,14 +41,13 @@ public class BookServlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            //HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
             System.out.println("This is a book manager");
 
-            //List<Book> result = HibernateUtil.getSessionFactory()
-            //        .getCurrentSession().createQuery("from Book").list();
+
             BookDao dao = new BookDao();
             List<Book> result = dao.findAll();
             System.out.println("normal here!\n");
