@@ -169,7 +169,7 @@ th {
     position: relative;
 }
 .Logo #img{
-    background-image: url('../../images/1.jpg');
+    background-image: url('/images/1.jpg');
     background-size: cover;
     width: 150px;
     height: 80px;
@@ -235,7 +235,7 @@ th {
 }
 
 .usrInfo #icon{
-    background-image: url('C:/Users/lyc/Desktop/BookShop/images/2.jpg');
+    background-image: url('/images/2.jpg');
     background-size: cover;
     width: 80px;
     height: 100px;

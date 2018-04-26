@@ -3088,7 +3088,6 @@ var ShoppingCart = function (_React$Component) {
         _this.state = {
             load: false,
             list: [],
-            record: new Array(10),
             name: ""
         };
         return _this;
@@ -3125,6 +3124,20 @@ var ShoppingCart = function (_React$Component) {
                 if (_this2.state.name == "") {
                     return;
                 }
+                var list = _this2.state.list;
+                var idx = list.indexOf(item);
+                //var record = this.state.record;
+                if (idx > -1) {
+                    if (list[idx].amount >= list[idx].stock) {
+                        alert("stock shortage!");
+                        return;
+                    } else {
+                        list[idx].amount += 1;
+                    }
+                } else {
+                    list.push(item);
+                    list[list.indexOf(item)].amount = 1;
+                }
                 $.ajax({
                     url: "Cart",
                     async: true,
@@ -3138,21 +3151,6 @@ var ShoppingCart = function (_React$Component) {
                         alert("addResponse!");
                     }.bind(_this2)
                 });
-                var list = _this2.state.list;
-                var idx = list.indexOf(item);
-                //var record = this.state.record;
-                if (idx > -1) {
-                    if (list[idx].amount >= list[idx].stock) {
-                        alert("stock shortage!");
-                    } else {
-                        list[idx].amount += 1;
-                        //record[idx] += 1;
-                    }
-                } else {
-                    list.push(item);
-                    //record[list.indexOf(item)] = 1;
-                    list[list.indexOf(item)].amount = 1;
-                }
 
                 //this.setState({record:record});
                 _this2.setState({ list: list });
@@ -3249,16 +3247,16 @@ var ShoppingCart = function (_React$Component) {
             var date = new Date();
             var content = [];
 
-            var record = this.state.record;
             var list = this.state.list;
             var len = list.length;
             for (var i = 0; i < len; i++) {
                 var item = Object();
+                item.bookid = list[i].id;
                 item.title = list[i].title;
                 item.author = list[i].author;
                 item.price = list[i].price;
                 item.amount = list[i].amount;
-                item.cost = list[i].price * record[i];
+                item.cost = list[i].price * list[i].amount;
                 content.push(item);
             }
 
@@ -3447,6 +3445,9 @@ var UserInfo = function (_React$Component) {
             });
             this.eventEmitter1 = _event2.default.addListener("User", function (name) {
                 _this2.setState({ name: name });
+                if (name == "") {
+                    _this2.setState({ orderList: [] });
+                }
             });
             this.eventEmitter2 = _event2.default.addListener("Order", function (order) {
                 var list = _this2.state.orderList;

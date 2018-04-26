@@ -5,12 +5,10 @@ package bookshop.Servlet;
 import bookshop.Dao.BookDao;
 import bookshop.Entity.Book;
 import bookshop.Entity.Cart;
-import bookshop.Util.HibernateUtil;
 import bookshop.Dao.CartDao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,8 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import static java.lang.Integer.parseInt;
 
@@ -127,9 +123,10 @@ public class CartServlet extends HttpServlet {
                 temp += amount;
                 cart.setAmount(temp);
                 if(temp == 0){
-                    dao.deleteByName(username);
+                    dao.deleteByNameAndId(username,bookid);
+                }else {
+                    dao.update(cart);
                 }
-                dao.update(cart);
             }else {
                 Cart newcart = new Cart();
                 newcart.setUsername(username);

@@ -52,14 +52,16 @@ public class CartDao {
     /*
      * 删除
      */
-    public void deleteByName(String name) {
+    public void deleteByNameAndId(String name, Integer id) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            Object user = (Cart) session.createQuery("from Cart where username = ? ")
-                    .setParameter(0, name).uniqueResult(); // 要先获取到这个对象
+            Object user = (Cart) session.createQuery("from Cart where username = ? and bookid = ?")
+                    .setParameter(0, name)
+                    .setParameter(1,id)
+                    .uniqueResult(); // 要先获取到这个对象
             session.delete(user); // 删除的是实体对象
 
             tx.commit();

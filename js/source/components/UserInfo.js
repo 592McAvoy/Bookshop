@@ -29,7 +29,7 @@ class UserInfo extends React.Component{
         this.eventEmitter1 = emitter.addListener("User",(name)=>{
             this.setState({name:name});
             if(name==""){
-                this.setState({orderlist:[]});
+                this.setState({orderList:[]});
             }
         });
         this.eventEmitter2 = emitter.addListener("Order",(order)=>{

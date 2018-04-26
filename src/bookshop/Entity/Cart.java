@@ -34,4 +34,8 @@ public class Cart {
         return amount;
     }
     public void setAmount(Integer a){this.amount = a;}
+    @Override
+    public String toString() {
+        return "[Cart: user=" + username + ", bookid=" + bookid+ ", amount=" + amount +" balabala]\n";
+    }
 }
