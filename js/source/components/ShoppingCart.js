@@ -13,7 +13,7 @@ class ShoppingCart extends React.Component{
         this.state={
             load:false,
             list:[],
-            record:new Array(10),
+            name:""
         }
     }
 
@@ -25,65 +25,131 @@ class ShoppingCart extends React.Component{
                 this.setState({load:true});  
             }         
         });
+        this.eventEmitter1 = emitter.addListener("User",(name)=>{
+            this.setState({name:name});
+            $.ajax({
+                url: "Cart",
+                async: true,
+                data:{name:name},
+                type: "get",
+                success: function(data){
+                    alert("cartResponse!");
+                    this.setState({
+                        list: JSON.parse(data),
+                    });
+                }.bind(this)
+            });
+        });
         this.eventEmitter2 = emitter.addListener("Add",(item)=>{
+            if(this.state.name == ""){
+                return;
+            }
+            $.ajax({
+                url: "Cart",
+                async: true,
+                data:{
+                    name:this.state.name,
+                    id:item.id+"",
+                    amount:"1"
+                },
+                type: "post",
+                success: function(data){
+                    alert("addResponse!");
+                }.bind(this)
+            });
             var list = this.state.list;
             var idx = list.indexOf(item);
-            var record = this.state.record;
+            //var record = this.state.record;
             if( idx > -1){
-                if(record[idx] >= list[idx].stock){
+                if(list[idx].amount >= list[idx].stock){
                     alert("stock shortage!")
                 }else{
-                    record[idx] += 1;
+                    list[idx].amount += 1;
+                    //record[idx] += 1;
                 }
             }
             else{
                 list.push(item);
-                record[list.indexOf(item)] = 1;
+                //record[list.indexOf(item)] = 1;
+                list[list.indexOf(item)].amount = 1;
             }
 
-            this.setState({record:record});
+            //this.setState({record:record});
             this.setState({list:list});
         });
     }
     componentWillUnmount(){
         emitter.removeListener(this.eventEmitter);
+        emitter.removeListener(this.eventEmitter1);
         emitter.removeListener(this.eventEmitter2);
     }
 
     totalCost(){
-        var record = this.state.record;
+        //var record = this.state.record;
         var list = this.state.list;
         var len = list.length;
         var sum = 0;
         for(var i=0;i<len;i++){
-            sum += record[i] * list[i].price;
+            sum += list[i].amount * list[i].price;
         }
         return sum;
     }
     icrNum(e){
         var idx = parseInt(e.target.dataset.row,10);
-        var record = this.state.record;
+        //var record = this.state.record;
         var list = this.state.list;
-        record[idx] += 1;
-        if(record[idx] > list[idx].stock){
+        var n = list[idx].amount;
+        n += 1;
+        //record[idx] += 1;
+        if(n > list[idx].stock){
             alert("stock shortage!")
             return;
         }
-        this.setState({record:record})
+        $.ajax({
+            url: "Cart",
+            async: true,
+            data:{
+                name:this.state.name,
+                id:list[idx].id+"",
+                amount:"1"
+            },
+            type: "post",
+            success: function(data){
+                alert("addResponse!");
+            }.bind(this)
+        });
+        list[idx].amount += 1;
+        this.setState({list:list})
     }
     dcrNum(e){
         var idx = parseInt(e.target.dataset.row,10);
-        var record = this.state.record;
         var list = this.state.list;
-        if(record[idx]>1){
-            record[idx] -= 1;
+        //var record = this.state.record;
+        $.ajax({
+            url: "Cart",
+            async: true,
+            data:{
+                name:this.state.name,
+                id:list[idx].id+"",
+                amount:"-1"
+            },
+            type: "post",
+            success: function(data){
+                alert("dcrResponse!");
+            }.bind(this)
+        });
+
+        var n = list[idx].amount;
+        if(n>1){
+            n -= 1;
+            list[idx].amount -= 1;
         }
        else{
-           record.splice(idx,1);
+           //record.splice(idx,1);
            list.splice(idx,1);
        }
+
         this.setState({
-            record:record,
             list:list
         })
         
@@ -101,11 +167,12 @@ class ShoppingCart extends React.Component{
         var len = list.length;
         for(var i=0;i<len;i++){
             var item = Object();
+            item.bookid = list[i].id;
             item.title = list[i].title;
             item.author = list[i].author;
             item.price = list[i].price;
-            item.amount = record[i];
-            item.cost = list[i].price * record[i];
+            item.amount = list[i].amount;
+            item.cost = list[i].price * list[i].amount;
             content.push(item);
         }
 
@@ -135,7 +202,7 @@ class ShoppingCart extends React.Component{
                                 <tr key={idx}>
                                     <td>{row.title}</td>
                                     <td>{"$"}{row.price}</td>
-                                    <td>{this.state.record[idx]}</td>
+                                    <td>{row.amount}</td>
                                     <td>
                                         <button data-row={idx} onClick={this.icrNum}>+</button>
                                         <button data-row={idx} onClick={this.dcrNum}>-</button>

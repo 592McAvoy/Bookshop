@@ -27,9 +27,12 @@ class UserInfo extends React.Component{
             }         
         });
         this.eventEmitter1 = emitter.addListener("User",(name)=>{
-            this.setState({name:name});        
+            this.setState({name:name});
+            if(name==""){
+                this.setState({orderlist:[]});
+            }
         });
-        this.eventEmitter1 = emitter.addListener("Order",(order)=>{
+        this.eventEmitter2 = emitter.addListener("Order",(order)=>{
             var list = this.state.orderList;
             list.push(order);
             this.setState({orderList:list}); 
@@ -39,6 +42,7 @@ class UserInfo extends React.Component{
     componentWillUnmount(){
         emitter.removeListener(this.eventEmitter);
         emitter.removeListener(this.eventEmitter1);
+        emitter.removeListener(this.eventEmitter2);
     }
 
     changeIntro(e){

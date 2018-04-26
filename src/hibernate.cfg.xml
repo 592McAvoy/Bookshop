@@ -23,5 +23,6 @@
         <property name="hbm2ddl.auto">update</property>
         <mapping resource="bookshop/Entity/User.hbm.xml"/>
         <mapping resource="bookshop/Entity/Book.hbm.xml"/>
+        <mapping resource="bookshop/Entity/Cart.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

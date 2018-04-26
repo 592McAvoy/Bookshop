@@ -179,6 +179,10 @@ class Log extends React.Component{
             emitter.emit("Log",msg)
         }
         cb("Log out");
+        const cn = (msg) => {
+            emitter.emit("User",msg)
+        }
+        cn("");
     }
 
     changePassword(e){

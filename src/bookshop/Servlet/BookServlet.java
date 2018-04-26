@@ -58,6 +58,7 @@ public class BookServlet extends HttpServlet {
                 Book book = (Book) it.next();
                 //System.out.println(book);
                 JSONObject obj = new JSONObject();
+                obj.put("id",book.getId());
                 obj.put("category",book.getCategory());
                 obj.put("title",book.getTitle());
                 obj.put("author",book.getAuthor());

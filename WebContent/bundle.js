@@ -825,7 +825,7 @@ _reactDom2.default.render(_react2.default.createElement(
   _react2.default.createElement(
     'div',
     { className: 'content' },
-    _react2.default.createElement(_BookTable2.default, { category: category, headers: headers, initialData: data }),
+    _react2.default.createElement(_BookTable2.default, { category: category, headers: headers }),
     _react2.default.createElement(_ShoppingCart2.default, null),
     _react2.default.createElement(_UserInfo2.default, null),
     _react2.default.createElement(_Log2.default, null),
@@ -1621,6 +1621,10 @@ var Log = function (_React$Component) {
                 _event2.default.emit("Log", msg);
             };
             cb("Log out");
+            var cn = function cn(msg) {
+                _event2.default.emit("User", msg);
+            };
+            cn("");
         }
     }, {
         key: "changePassword",
@@ -2272,7 +2276,6 @@ var ManageBook = function (_React$Component) {
                     _react2.default.createElement("input", { type: "text", value: this.state.author,
                         onChange: this.changeAuthor })
                 ),
-                _react2.default.createElement("br", null),
                 _react2.default.createElement(
                     "label",
                     null,
@@ -3085,7 +3088,8 @@ var ShoppingCart = function (_React$Component) {
         _this.state = {
             load: false,
             list: [],
-            record: new Array(10)
+            record: new Array(10),
+            name: ""
         };
         return _this;
     }
@@ -3102,22 +3106,55 @@ var ShoppingCart = function (_React$Component) {
                     _this2.setState({ load: true });
                 }
             });
+            this.eventEmitter1 = _event2.default.addListener("User", function (name) {
+                _this2.setState({ name: name });
+                $.ajax({
+                    url: "Cart",
+                    async: true,
+                    data: { name: name },
+                    type: "get",
+                    success: function (data) {
+                        alert("cartResponse!");
+                        this.setState({
+                            list: JSON.parse(data)
+                        });
+                    }.bind(_this2)
+                });
+            });
             this.eventEmitter2 = _event2.default.addListener("Add", function (item) {
+                if (_this2.state.name == "") {
+                    return;
+                }
+                $.ajax({
+                    url: "Cart",
+                    async: true,
+                    data: {
+                        name: _this2.state.name,
+                        id: item.id + "",
+                        amount: "1"
+                    },
+                    type: "post",
+                    success: function (data) {
+                        alert("addResponse!");
+                    }.bind(_this2)
+                });
                 var list = _this2.state.list;
                 var idx = list.indexOf(item);
-                var record = _this2.state.record;
+                //var record = this.state.record;
                 if (idx > -1) {
-                    if (record[idx] >= list[idx].stock) {
+                    if (list[idx].amount >= list[idx].stock) {
                         alert("stock shortage!");
                     } else {
-                        record[idx] += 1;
+                        list[idx].amount += 1;
+                        //record[idx] += 1;
                     }
                 } else {
                     list.push(item);
-                    record[list.indexOf(item)] = 1;
+                    //record[list.indexOf(item)] = 1;
+                    list[list.indexOf(item)].amount = 1;
                 }
 
-                _this2.setState({ record: record });
+                //this.setState({record:record});
                 _this2.setState({ list: list });
             });
         }
@@ -3125,17 +3162,18 @@ var ShoppingCart = function (_React$Component) {
         key: "componentWillUnmount",
         value: function componentWillUnmount() {
             _event2.default.removeListener(this.eventEmitter);
+            _event2.default.removeListener(this.eventEmitter1);
             _event2.default.removeListener(this.eventEmitter2);
         }
     }, {
         key: "totalCost",
         value: function totalCost() {
-            var record = this.state.record;
+            //var record = this.state.record;
             var list = this.state.list;
             var len = list.length;
             var sum = 0;
             for (var i = 0; i < len; i++) {
-                sum += record[i] * list[i].price;
+                sum += list[i].amount * list[i].price;
             }
             return sum;
         }
@@ -3143,29 +3181,61 @@ var ShoppingCart = function (_React$Component) {
         key: "icrNum",
         value: function icrNum(e) {
             var idx = parseInt(e.target.dataset.row, 10);
-            var record = this.state.record;
+            //var record = this.state.record;
             var list = this.state.list;
-            record[idx] += 1;
-            if (record[idx] > list[idx].stock) {
+            var n = list[idx].amount;
+            n += 1;
+            //record[idx] += 1;
+            if (n > list[idx].stock) {
                 alert("stock shortage!");
                 return;
             }
-            this.setState({ record: record });
+            $.ajax({
+                url: "Cart",
+                async: true,
+                data: {
+                    name: this.state.name,
+                    id: list[idx].id + "",
+                    amount: "1"
+                },
+                type: "post",
+                success: function (data) {
+                    alert("addResponse!");
+                }.bind(this)
+            });
+            list[idx].amount += 1;
+            this.setState({ list: list });
         }
     }, {
         key: "dcrNum",
         value: function dcrNum(e) {
             var idx = parseInt(e.target.dataset.row, 10);
-            var record = this.state.record;
             var list = this.state.list;
-            if (record[idx] > 1) {
-                record[idx] -= 1;
+            //var record = this.state.record;
+            $.ajax({
+                url: "Cart",
+                async: true,
+                data: {
+                    name: this.state.name,
+                    id: list[idx].id + "",
+                    amount: "-1"
+                },
+                type: "post",
+                success: function (data) {
+                    alert("dcrResponse!");
+                }.bind(this)
+            });
+
+            var n = list[idx].amount;
+            if (n > 1) {
+                n -= 1;
+                list[idx].amount -= 1;
             } else {
-                record.splice(idx, 1);
+                //record.splice(idx,1);
                 list.splice(idx, 1);
             }
+
             this.setState({
-                record: record,
                 list: list
             });
         }
@@ -3185,9 +3255,9 @@ var ShoppingCart = function (_React$Component) {
             for (var i = 0; i < len; i++) {
                 var item = Object();
                 item.title = list[i].title;
-                item.auther = list[i].auther;
+                item.author = list[i].author;
                 item.price = list[i].price;
-                item.amount = record[i];
+                item.amount = list[i].amount;
                 item.cost = list[i].price * record[i];
                 content.push(item);
             }
@@ -3257,7 +3327,7 @@ var ShoppingCart = function (_React$Component) {
                                 _react2.default.createElement(
                                     "td",
                                     null,
-                                    _this3.state.record[idx]
+                                    row.amount
                                 ),
                                 _react2.default.createElement(
                                     "td",
@@ -3378,7 +3448,7 @@ var UserInfo = function (_React$Component) {
             this.eventEmitter1 = _event2.default.addListener("User", function (name) {
                 _this2.setState({ name: name });
             });
-            this.eventEmitter1 = _event2.default.addListener("Order", function (order) {
+            this.eventEmitter2 = _event2.default.addListener("Order", function (order) {
                 var list = _this2.state.orderList;
                 list.push(order);
                 _this2.setState({ orderList: list });
@@ -3390,6 +3460,7 @@ var UserInfo = function (_React$Component) {
         value: function componentWillUnmount() {
             _event2.default.removeListener(this.eventEmitter);
             _event2.default.removeListener(this.eventEmitter1);
+            _event2.default.removeListener(this.eventEmitter2);
         }
     }, {
         key: "changeIntro",
