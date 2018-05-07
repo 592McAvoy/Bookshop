@@ -33,7 +33,7 @@ class ShoppingCart extends React.Component{
                 data:{name:name},
                 type: "get",
                 success: function(data){
-                    alert("cartResponse!");
+                    //alert("cartResponse!");
                     this.setState({
                         list: JSON.parse(data),
                     });
@@ -69,7 +69,7 @@ class ShoppingCart extends React.Component{
                 },
                 type: "post",
                 success: function(data){
-                    alert("addResponse!");
+                    //alert("addResponse!");
                 }.bind(this)
             });
 
@@ -114,7 +114,7 @@ class ShoppingCart extends React.Component{
             },
             type: "post",
             success: function(data){
-                alert("addResponse!");
+                //alert("addResponse!");
             }.bind(this)
         });
         list[idx].amount += 1;
@@ -134,7 +134,7 @@ class ShoppingCart extends React.Component{
             },
             type: "post",
             success: function(data){
-                alert("dcrResponse!");
+                //alert("dcrResponse!");
             }.bind(this)
         });
 
@@ -161,6 +161,10 @@ class ShoppingCart extends React.Component{
         var date = new Date();        
         var content = [];
 
+        var order = Object();
+        order.time = date.getFullYear()+"/"+(1+date.getMonth())+"/"+date.getDate()+"  "+date.getHours()+":"+date.getMinutes();
+        order.totalCost = sum;
+
         var list = this.state.list;
         var len = list.length;
         for(var i=0;i<len;i++){
@@ -172,12 +176,41 @@ class ShoppingCart extends React.Component{
             item.amount = list[i].amount;
             item.cost = list[i].price * list[i].amount;
             content.push(item);
+            $.ajax({
+                url: "Sales",
+                async: true,
+                data:{
+                    username:this.state.name,
+                    time:order.time,
+                    category:list[i].category,
+                    title:item.title,
+                    author:item.author,
+                    price:item.price,
+                    amount:item.amount
+                },
+                type: "post",
+                success: function(data){
+                    alert("addSalesResponse!");
+                }.bind(this)
+            });
         }
 
-        var order = Object();
-        order.time = date;
-        order.totalCost = sum;
         order.content = content;
+
+        $.ajax({
+            url: "Order",
+            async: true,
+            data:{
+                name:this.state.name,
+                time:order.time,
+                cost:order.totalCost,
+                content:JSON.stringify(order.content)
+            },
+            type: "post",
+            success: function(data){
+                //alert("addOrderResponse!");
+            }.bind(this)
+        });
 
         const co = (order) => {
             emitter.emit("Order",order)

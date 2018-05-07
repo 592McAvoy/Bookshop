@@ -45,6 +45,7 @@ class Info extends React.Component{
                 <div className="Info">
                     <a href='#' onClick = {cb("ManageBook")}>Manage Book</a>
                     <a href='#' onClick = {cb("ManageUser")}>Manage User</a>
+                    <a href='#' onClick = {cb("SalesStatistics")}>Sales Statistics</a>
                     <a href='#' onClick = {cb("Log")}>Log out</a>
                 </div>
             );

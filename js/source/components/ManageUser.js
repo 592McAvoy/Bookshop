@@ -53,7 +53,7 @@ class ManageUser extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("manageUserGetResponse!");
+                //alert("manageUserGetResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });
@@ -118,7 +118,7 @@ class ManageUser extends React.Component{
                 state:this.state.sta+""
             },
             success: function(){
-                alert("manageUserModifyResponse!");
+               // alert("manageUserModifyResponse!");
 
             }.bind(this)
         });
@@ -152,7 +152,7 @@ class ManageUser extends React.Component{
                 username:row.username,
             },
             success: function(){
-                alert("manageUserDeleteResponse!");
+                //alert("manageUserDeleteResponse!");
 
             }.bind(this)
         });
@@ -178,7 +178,7 @@ class ManageUser extends React.Component{
                 state:this.state.sta+""
             },
             success: function(){
-                alert("manageUserAddResponse!");
+                //alert("manageUserAddResponse!");
 
             }.bind(this)
         });
@@ -238,7 +238,7 @@ class ManageUser extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("manageUserFreshResponse!");
+                //alert("manageUserFreshResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });

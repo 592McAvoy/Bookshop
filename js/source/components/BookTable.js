@@ -55,7 +55,7 @@ class BookTable extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("bookResponse!");
+                //alert("bookResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });
@@ -92,7 +92,7 @@ class BookTable extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("bookResponse!");
+                //alert("bookResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });

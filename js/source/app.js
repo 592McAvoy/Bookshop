@@ -8,6 +8,7 @@ import ShoppingCart from './components/ShoppingCart'
 import UserInfo from './components/UserInfo'
 import ManageBook from './components/ManageBook'
 import ManageUser from './components/ManageUser'
+import Statistics from './components/Statistics'
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -50,6 +51,7 @@ ReactDOM.render(
       <Log/>
       <ManageBook/>
       <ManageUser/>
+        <Statistics/>
     </div>    
   </div>,
   document.getElementById('app')

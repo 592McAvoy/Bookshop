@@ -30,7 +30,20 @@ class UserInfo extends React.Component{
             this.setState({name:name});
             if(name==""){
                 this.setState({orderList:[]});
+                return;
             }
+            $.ajax({
+                url: "Order",
+                async: true,
+                data:{name:name},
+                type: "get",
+                success: function(data){
+                    //alert("orderResponse!");
+                    this.setState({
+                        orderList: JSON.parse(data),
+                    });
+                }.bind(this)
+            });
         });
         this.eventEmitter2 = emitter.addListener("Order",(order)=>{
             var list = this.state.orderList;
@@ -98,22 +111,18 @@ class UserInfo extends React.Component{
                 <tbody>
                     {
                         this.state.orderList.map((row,idx)=>{
-                            var date = row.time;
-                            var time = date.getFullYear()+"/"+date.getMonth()+"/"+date.getDate()+"  "+date.getHours()+":"+date.getMinutes();
                             return(
                                 <tr key={idx}>
                                     <td>#{idx+1}</td>
                                     <td>${row.totalCost}</td>
-                                    <td>{time}</td>
+                                    <td>{row.time}</td>
                                     <td>
                                         <ul>
                                             {
                                                 row.content.map((rr,idx)=>{
                                                     var title = "<<"+rr.title+">>";
-                                                    var author = rr.author;
-                                                    var price = "$"+rr.price;
                                                     return(
-                                                        <li key={idx}>{title+" -- By "+rr.author+" ---- "+price+" * "+rr.amount+" = $"+rr.cost}</li>
+                                                        <li key={idx}>{title+" -- By "+rr.author+" ---- $"+rr.price+" * "+rr.amount+" = $"+rr.cost}</li>
                                                     )
                                                 },this)
                                             }

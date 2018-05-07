@@ -791,6 +791,10 @@ var _ManageUser = require('./components/ManageUser');
 
 var _ManageUser2 = _interopRequireDefault(_ManageUser);
 
+var _Statistics = require('./components/Statistics');
+
+var _Statistics2 = _interopRequireDefault(_Statistics);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -830,10 +834,11 @@ _reactDom2.default.render(_react2.default.createElement(
     _react2.default.createElement(_UserInfo2.default, null),
     _react2.default.createElement(_Log2.default, null),
     _react2.default.createElement(_ManageBook2.default, null),
-    _react2.default.createElement(_ManageUser2.default, null)
+    _react2.default.createElement(_ManageUser2.default, null),
+    _react2.default.createElement(_Statistics2.default, null)
   )
 ), document.getElementById('app'));
-},{"./components/BookTable":5,"./components/Info":6,"./components/Log":7,"./components/Logo":8,"./components/ManageBook":9,"./components/ManageUser":10,"./components/ShoppingCart":11,"./components/UserInfo":12,"os":2,"react":38,"react-dom":35}],5:[function(require,module,exports){
+},{"./components/BookTable":5,"./components/Info":6,"./components/Log":7,"./components/Logo":8,"./components/ManageBook":9,"./components/ManageUser":10,"./components/ShoppingCart":11,"./components/Statistics":12,"./components/UserInfo":13,"os":2,"react":39,"react-dom":36}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -921,7 +926,7 @@ var BookTable = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("bookResponse!");
+                    //alert("bookResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -968,7 +973,7 @@ var BookTable = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("bookResponse!");
+                    //alert("bookResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -1252,7 +1257,7 @@ var BookTable = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = BookTable;
-},{"./event":13,"react":38}],6:[function(require,module,exports){
+},{"./event":14,"react":39}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1345,6 +1350,11 @@ var Info = function (_React$Component) {
                     ),
                     _react2.default.createElement(
                         "a",
+                        { href: "#", onClick: cb("SalesStatistics") },
+                        "Sales Statistics"
+                    ),
+                    _react2.default.createElement(
+                        "a",
                         { href: "#", onClick: cb("Log") },
                         "Log out"
                     )
@@ -1398,7 +1408,7 @@ var Info = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Info;
-},{"./event":13,"react":38}],7:[function(require,module,exports){
+},{"./event":14,"react":39}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1480,7 +1490,7 @@ var Log = function (_React$Component) {
         key: "checkLog",
         value: function checkLog(e) {
             e.preventDefault();
-            alert("begin check log!\n");
+            //alert("begin check log!\n");
 
             var xmlhttp;
 
@@ -1491,11 +1501,11 @@ var Log = function (_React$Component) {
             }
             this.serverRequest = xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    alert("Response!");
+                    //alert("Response!");
                     var resp = xmlhttp.responseText + "";
                     resp = resp.replace(/^\s+|\s+$/g, "");
                     if (resp.trim() == "USER") {
-                        alert("USER!\n");
+                        //alert("USER!\n");
                         this.handleLog();
                     } else if (resp.trim() == "NULL") {
                         alert("user doesn't exist!");
@@ -1558,7 +1568,7 @@ var Log = function (_React$Component) {
         key: "checkRegister",
         value: function checkRegister(e) {
             e.preventDefault();
-            alert("begin check Register!\n");
+            //alert("begin check Register!\n");
             var xmlhttp;
 
             if (window.XMLHttpRequest) {
@@ -1570,11 +1580,11 @@ var Log = function (_React$Component) {
                 var _this3 = this;
 
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    alert("regResponse!");
+                    //alert("regResponse!");
                     var pwd = xmlhttp.responseText + "";
                     pwd = pwd.replace(/^\s+|\s+$/g, "");
                     if (pwd.trim() == "ADDUSER") {
-                        alert("add!");
+                        //alert("add!");
                         this.setState({
                             validUser: true,
                             validInfo: true
@@ -1607,7 +1617,7 @@ var Log = function (_React$Component) {
             this.setState({
                 logIn: false,
                 register: false,
-                userName: "my friend",
+                userName: "",
                 password: "",
                 phoneNum: "",
                 emailAddr: "",
@@ -1674,7 +1684,8 @@ var Log = function (_React$Component) {
         value: function changeEmailAddr(e) {
             var email = e.target.value;
             this.setState({ emailAddr: email });
-            if (email.indexOf("@") > 1) {
+            var myReg = /^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+            if (myReg.test(email)) {
                 console.log('email：验证成功');
                 this.setState({ validEmail: true });
                 return;
@@ -1790,15 +1801,15 @@ var Log = function (_React$Component) {
                         null,
                         "UserName:",
                         _react2.default.createElement("input", { type: "text", value: this.state.userName,
-                            onChange: this.changeUsr, placeholder: "..." })
+                            onChange: this.changeUsr, placeholder: "username" })
                     ),
                     _react2.default.createElement("br", null),
                     _react2.default.createElement(
                         "label",
                         null,
                         "Password:",
-                        _react2.default.createElement("input", { type: "text", value: this.state.password,
-                            onChange: this.changePassword, placeholder: "..." })
+                        _react2.default.createElement("input", { type: "password", value: this.state.password,
+                            onChange: this.changePassword, placeholder: "password" })
                     ),
                     _react2.default.createElement("br", null),
                     _react2.default.createElement("input", { type: "submit", value: "Log In" })
@@ -1824,7 +1835,7 @@ var Log = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Log;
-},{"./event":13,"react":38}],8:[function(require,module,exports){
+},{"./event":14,"react":39}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1874,7 +1885,7 @@ var Logo = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Logo;
-},{"react":38}],9:[function(require,module,exports){
+},{"react":39}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1966,7 +1977,7 @@ var ManageBook = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("manageBookGetResponse!");
+                    //alert("manageBookGetResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -2063,7 +2074,8 @@ var ManageBook = function (_React$Component) {
                     img: this.state.img
                 },
                 success: function () {
-                    alert("manageBookModifyResponse!");
+                    //alert("manageBookModifyResponse!");
+
                 }.bind(this)
             });
 
@@ -2100,7 +2112,8 @@ var ManageBook = function (_React$Component) {
                     id: row.id + ""
                 },
                 success: function () {
-                    alert("manageBookDeleteResponse!");
+                    //alert("manageBookDeleteResponse!");
+
                 }.bind(this)
             });
 
@@ -2129,7 +2142,8 @@ var ManageBook = function (_React$Component) {
                     img: this.state.img
                 },
                 success: function () {
-                    alert("manageBookAddResponse!");
+                    //alert("manageBookAddResponse!");
+
                 }.bind(this)
             });
             var data = this.state.data;
@@ -2203,7 +2217,7 @@ var ManageBook = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("manageBookFreshResponse!");
+                    //alert("manageBookFreshResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -2491,7 +2505,7 @@ var ManageBook = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = ManageBook;
-},{"./event":13,"react":38}],10:[function(require,module,exports){
+},{"./event":14,"react":39}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2577,7 +2591,7 @@ var ManageUser = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("manageUserGetResponse!");
+                    //alert("manageUserGetResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -2658,7 +2672,8 @@ var ManageUser = function (_React$Component) {
                     state: this.state.sta + ""
                 },
                 success: function () {
-                    alert("manageUserModifyResponse!");
+                    // alert("manageUserModifyResponse!");
+
                 }.bind(this)
             });
 
@@ -2693,7 +2708,8 @@ var ManageUser = function (_React$Component) {
                     username: row.username
                 },
                 success: function () {
-                    alert("manageUserDeleteResponse!");
+                    //alert("manageUserDeleteResponse!");
+
                 }.bind(this)
             });
 
@@ -2720,7 +2736,8 @@ var ManageUser = function (_React$Component) {
                     state: this.state.sta + ""
                 },
                 success: function () {
-                    alert("manageUserAddResponse!");
+                    //alert("manageUserAddResponse!");
+
                 }.bind(this)
             });
             var data = this.state.data;
@@ -2784,7 +2801,7 @@ var ManageUser = function (_React$Component) {
                 async: true,
                 type: "get",
                 success: function (data) {
-                    alert("manageUserFreshResponse!");
+                    //alert("manageUserFreshResponse!");
                     this.setState({
                         data: JSON.parse(data)
                     });
@@ -3047,7 +3064,7 @@ var ManageUser = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = ManageUser;
-},{"./event":13,"react":38}],11:[function(require,module,exports){
+},{"./event":14,"react":39}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3113,7 +3130,7 @@ var ShoppingCart = function (_React$Component) {
                     data: { name: name },
                     type: "get",
                     success: function (data) {
-                        alert("cartResponse!");
+                        //alert("cartResponse!");
                         this.setState({
                             list: JSON.parse(data)
                         });
@@ -3148,7 +3165,7 @@ var ShoppingCart = function (_React$Component) {
                     },
                     type: "post",
                     success: function (data) {
-                        alert("addResponse!");
+                        //alert("addResponse!");
                     }.bind(_this2)
                 });
 
@@ -3198,7 +3215,7 @@ var ShoppingCart = function (_React$Component) {
                 },
                 type: "post",
                 success: function (data) {
-                    alert("addResponse!");
+                    //alert("addResponse!");
                 }.bind(this)
             });
             list[idx].amount += 1;
@@ -3220,7 +3237,7 @@ var ShoppingCart = function (_React$Component) {
                 },
                 type: "post",
                 success: function (data) {
-                    alert("dcrResponse!");
+                    //alert("dcrResponse!");
                 }.bind(this)
             });
 
@@ -3247,6 +3264,10 @@ var ShoppingCart = function (_React$Component) {
             var date = new Date();
             var content = [];
 
+            var order = Object();
+            order.time = date.getFullYear() + "/" + (1 + date.getMonth()) + "/" + date.getDate() + "  " + date.getHours() + ":" + date.getMinutes();
+            order.totalCost = sum;
+
             var list = this.state.list;
             var len = list.length;
             for (var i = 0; i < len; i++) {
@@ -3258,12 +3279,41 @@ var ShoppingCart = function (_React$Component) {
                 item.amount = list[i].amount;
                 item.cost = list[i].price * list[i].amount;
                 content.push(item);
+                $.ajax({
+                    url: "Sales",
+                    async: true,
+                    data: {
+                        username: this.state.name,
+                        time: order.time,
+                        category: list[i].category,
+                        title: item.title,
+                        author: item.author,
+                        price: item.price,
+                        amount: item.amount
+                    },
+                    type: "post",
+                    success: function (data) {
+                        alert("addSalesResponse!");
+                    }.bind(this)
+                });
             }
 
-            var order = Object();
-            order.time = date;
-            order.totalCost = sum;
             order.content = content;
+
+            $.ajax({
+                url: "Order",
+                async: true,
+                data: {
+                    name: this.state.name,
+                    time: order.time,
+                    cost: order.totalCost,
+                    content: JSON.stringify(order.content)
+                },
+                type: "post",
+                success: function (data) {
+                    //alert("addOrderResponse!");
+                }.bind(this)
+            });
 
             var co = function co(order) {
                 _event2.default.emit("Order", order);
@@ -3384,7 +3434,323 @@ var ShoppingCart = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = ShoppingCart;
-},{"./event":13,"react":38}],12:[function(require,module,exports){
+},{"./event":14,"react":39}],12:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _event = require("./event");
+
+var _event2 = _interopRequireDefault(_event);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Statistics = function (_React$Component) {
+    _inherits(Statistics, _React$Component);
+
+    function Statistics(props) {
+        _classCallCheck(this, Statistics);
+
+        var _this = _possibleConstructorReturn(this, (Statistics.__proto__ || Object.getPrototypeOf(Statistics)).call(this, props));
+
+        _this.changeAuthor = _this.changeAuthor.bind(_this);
+        _this.changeCate = _this.changeCate.bind(_this);
+        _this.changeTime = _this.changeTime.bind(_this);
+        _this.changeUser = _this.changeUser.bind(_this);
+        _this.select = _this.select.bind(_this);
+
+        _this.state = {
+            load: false,
+            predata: null,
+            data: [],
+            header: ["username", "time", "category", "title", "author", "price", "amount"],
+            userIdx: "",
+            timeIdx: "",
+            authorIdx: "",
+            cateIdx: ""
+        };
+        return _this;
+    }
+
+    _createClass(Statistics, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            this.eventEmitter = _event2.default.addListener("Page", function (msg) {
+                console.log(msg);
+                if (msg === "SalesStatistics") {
+                    _this2.setState({ load: true });
+                } else {
+                    _this2.setState({
+                        load: false
+                    });
+                }
+            });
+
+            $.ajax({
+                url: "Sales",
+                async: true,
+                type: "get",
+                success: function (data) {
+                    //alert("manageBookGetResponse!");
+                    this.setState({
+                        data: JSON.parse(data)
+                    });
+                }.bind(this)
+            });
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            _event2.default.removeListener(this.eventEmitter);
+        }
+    }, {
+        key: "changeUser",
+        value: function changeUser(e) {
+            var idx = e.target.value;
+            this.setState({
+                userIdx: idx
+            });
+        }
+    }, {
+        key: "changeAuthor",
+        value: function changeAuthor(e) {
+            var idx = e.target.value;
+            this.setState({
+                authorIdx: idx
+            });
+        }
+    }, {
+        key: "changeCate",
+        value: function changeCate(e) {
+            var idx = e.target.value;
+            this.setState({
+                cateIdx: idx
+            });
+        }
+    }, {
+        key: "changeTime",
+        value: function changeTime(e) {
+            var idx = e.target.value;
+            this.setState({
+                timeIdx: idx
+            });
+        }
+    }, {
+        key: "select",
+        value: function select(e) {
+            //时间统计还未实现
+            e.preventDefault();
+            var data;
+            if (this.state.predata == null) {
+                //console.log("predata: "+this.state.predata);
+                data = this.state.data;
+                this.setState({ predata: data });
+            } else {
+                data = this.state.predata;
+            }
+
+            var newdata = data.filter(function (row) {
+                return row.username.indexOf(this.state.userIdx) > -1 && row.category.indexOf(this.state.cateIdx) > -1 && row.author.indexOf(this.state.authorIdx) > -1;
+            }, this);
+            this.setState({ data: newdata });
+        }
+    }, {
+        key: "totalAmount",
+        value: function totalAmount() {
+            var data = this.state.data;
+            var len = data.length;
+            var sum = 0;
+            for (var i = 0; i < len; i++) {
+                sum += data[i].amount;
+            }
+            return sum;
+        }
+    }, {
+        key: "totalCost",
+        value: function totalCost() {
+            var data = this.state.data;
+            var len = data.length;
+            var sum = 0;
+            for (var i = 0; i < len; i++) {
+                sum += data[i].amount * data[i].price;
+            }
+            return sum;
+        }
+    }, {
+        key: "renderSelect",
+        value: function renderSelect() {
+            return _react2.default.createElement(
+                "form",
+                null,
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "Statistics for user:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.userIdx, onChange: this.changeUser })
+                ),
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "Statistics for author:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.authorIdx, onChange: this.changeAuthor })
+                ),
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "label",
+                    null,
+                    "Statistics for category:",
+                    _react2.default.createElement("input", { type: "text", value: this.state.cateIdx, onChange: this.changeCate })
+                ),
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "select",
+                    { value: this.state.timeIdx, onChange: this.changeTime },
+                    _react2.default.createElement(
+                        "option",
+                        { value: "All" },
+                        "--"
+                    ),
+                    _react2.default.createElement(
+                        "option",
+                        { value: "ByWeek" },
+                        "Recent One Week"
+                    ),
+                    _react2.default.createElement(
+                        "option",
+                        { value: "ByMonth" },
+                        "Recent One Month"
+                    )
+                ),
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.select },
+                    "SELECT"
+                )
+            );
+        }
+    }, {
+        key: "renderTable",
+        value: function renderTable() {
+            return _react2.default.createElement(
+                "table",
+                null,
+                _react2.default.createElement(
+                    "thead",
+                    null,
+                    _react2.default.createElement(
+                        "tr",
+                        null,
+                        this.state.header.map(function (title, idx) {
+                            return _react2.default.createElement(
+                                "th",
+                                { key: idx },
+                                title
+                            );
+                        }, this)
+                    )
+                ),
+                _react2.default.createElement(
+                    "tbody",
+                    null,
+                    this.state.data.map(function (row, idx) {
+                        return _react2.default.createElement(
+                            "tr",
+                            { key: idx, "data-row": idx },
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.username
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.time
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.category
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.title
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.author
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.price
+                            ),
+                            _react2.default.createElement(
+                                "td",
+                                { "data-row": idx },
+                                row.amount
+                            )
+                        );
+                    }, this)
+                )
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            if (this.state.load) {
+                var table = this.renderTable();
+                var select = this.renderSelect();
+
+                return _react2.default.createElement(
+                    "div",
+                    { className: "ManageBook" },
+                    select,
+                    table,
+                    _react2.default.createElement(
+                        "p",
+                        null,
+                        "Total Amount:",
+                        "     ",
+                        this.totalAmount()
+                    ),
+                    _react2.default.createElement(
+                        "p",
+                        null,
+                        "Total Cost:",
+                        "     $",
+                        this.totalCost()
+                    )
+                );
+            } else {
+                return _react2.default.createElement("div", null);
+            }
+        }
+    }]);
+
+    return Statistics;
+}(_react2.default.Component);
+
+exports.default = Statistics;
+},{"./event":14,"react":39}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3447,7 +3813,20 @@ var UserInfo = function (_React$Component) {
                 _this2.setState({ name: name });
                 if (name == "") {
                     _this2.setState({ orderList: [] });
+                    return;
                 }
+                $.ajax({
+                    url: "Order",
+                    async: true,
+                    data: { name: name },
+                    type: "get",
+                    success: function (data) {
+                        //alert("orderResponse!");
+                        this.setState({
+                            orderList: JSON.parse(data)
+                        });
+                    }.bind(_this2)
+                });
             });
             this.eventEmitter2 = _event2.default.addListener("Order", function (order) {
                 var list = _this2.state.orderList;
@@ -3573,8 +3952,6 @@ var UserInfo = function (_React$Component) {
                     "tbody",
                     null,
                     this.state.orderList.map(function (row, idx) {
-                        var date = row.time;
-                        var time = date.getFullYear() + "/" + date.getMonth() + "/" + date.getDate() + "  " + date.getHours() + ":" + date.getMinutes();
                         return _react2.default.createElement(
                             "tr",
                             { key: idx },
@@ -3593,7 +3970,7 @@ var UserInfo = function (_React$Component) {
                             _react2.default.createElement(
                                 "td",
                                 null,
-                                time
+                                row.time
                             ),
                             _react2.default.createElement(
                                 "td",
@@ -3603,12 +3980,10 @@ var UserInfo = function (_React$Component) {
                                     null,
                                     row.content.map(function (rr, idx) {
                                         var title = "<<" + rr.title + ">>";
-                                        var author = rr.author;
-                                        var price = "$" + rr.price;
                                         return _react2.default.createElement(
                                             "li",
                                             { key: idx },
-                                            title + " -- By " + rr.author + " ---- " + price + " * " + rr.amount + " = $" + rr.cost
+                                            title + " -- By " + rr.author + " ---- $" + rr.price + " * " + rr.amount + " = $" + rr.cost
                                         );
                                     }, _this3)
                                 )
@@ -3639,7 +4014,7 @@ var UserInfo = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = UserInfo;
-},{"./event":13,"react":38}],13:[function(require,module,exports){
+},{"./event":14,"react":39}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3653,7 +4028,7 @@ var _events2 = _interopRequireDefault(_events);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = new _events2.default();
-},{"events":1}],14:[function(require,module,exports){
+},{"events":1}],15:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -3730,7 +4105,7 @@ var EventListener = {
 
 module.exports = EventListener;
 }).call(this,require('_process'))
-},{"./emptyFunction":19,"_process":3}],15:[function(require,module,exports){
+},{"./emptyFunction":20,"_process":3}],16:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3764,7 +4139,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3794,7 +4169,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3832,7 +4207,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":16}],18:[function(require,module,exports){
+},{"./camelize":17}],19:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3870,7 +4245,7 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":27}],19:[function(require,module,exports){
+},{"./isTextNode":28}],20:[function(require,module,exports){
 "use strict";
 
 /**
@@ -3907,7 +4282,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -3927,7 +4302,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = emptyObject;
 }).call(this,require('_process'))
-},{"_process":3}],21:[function(require,module,exports){
+},{"_process":3}],22:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -3952,7 +4327,7 @@ function focusNode(node) {
 }
 
 module.exports = focusNode;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3989,7 +4364,7 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4020,7 +4395,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4057,7 +4432,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":23}],25:[function(require,module,exports){
+},{"./hyphenate":24}],26:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4113,7 +4488,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":3}],26:[function(require,module,exports){
+},{"_process":3}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4136,7 +4511,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4159,7 +4534,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":26}],28:[function(require,module,exports){
+},{"./isNode":27}],29:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4225,7 +4600,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -4290,7 +4665,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 }).call(this,require('_process'))
-},{"./emptyFunction":19,"_process":3}],30:[function(require,module,exports){
+},{"./emptyFunction":20,"_process":3}],31:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -4382,7 +4757,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -4445,7 +4820,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":32,"_process":3,"fbjs/lib/invariant":25,"fbjs/lib/warning":29}],32:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":33,"_process":3,"fbjs/lib/invariant":26,"fbjs/lib/warning":30}],33:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4459,7 +4834,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (process){
 /** @license React v16.2.0
  * react-dom.development.js
@@ -19857,7 +20232,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fbjs/lib/EventListener":14,"fbjs/lib/ExecutionEnvironment":15,"fbjs/lib/camelizeStyleName":17,"fbjs/lib/containsNode":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/emptyObject":20,"fbjs/lib/focusNode":21,"fbjs/lib/getActiveElement":22,"fbjs/lib/hyphenateStyleName":24,"fbjs/lib/invariant":25,"fbjs/lib/shallowEqual":28,"fbjs/lib/warning":29,"object-assign":30,"prop-types/checkPropTypes":31,"react":38}],34:[function(require,module,exports){
+},{"_process":3,"fbjs/lib/EventListener":15,"fbjs/lib/ExecutionEnvironment":16,"fbjs/lib/camelizeStyleName":18,"fbjs/lib/containsNode":19,"fbjs/lib/emptyFunction":20,"fbjs/lib/emptyObject":21,"fbjs/lib/focusNode":22,"fbjs/lib/getActiveElement":23,"fbjs/lib/hyphenateStyleName":25,"fbjs/lib/invariant":26,"fbjs/lib/shallowEqual":29,"fbjs/lib/warning":30,"object-assign":31,"prop-types/checkPropTypes":32,"react":39}],35:[function(require,module,exports){
 /** @license React v16.2.0
  * react-dom.production.min.js
  *
@@ -20088,7 +20463,7 @@ var Sg={createPortal:Qg,findDOMNode:function(a){if(null==a)return null;if(1===a.
 E("40");return a._reactRootContainer?(Z.unbatchedUpdates(function(){Pg(null,null,a,!1,function(){a._reactRootContainer=null})}),!0):!1},unstable_createPortal:Qg,unstable_batchedUpdates:tc,unstable_deferredUpdates:Z.deferredUpdates,flushSync:Z.flushSync,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:mb,EventPluginRegistry:Va,EventPropagators:Cb,ReactControlledComponent:qc,ReactDOMComponentTree:sb,ReactDOMEventListener:xd}};
 Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",rendererPackageName:"react-dom"});var Tg=Object.freeze({default:Sg}),Ug=Tg&&Sg||Tg;module.exports=Ug["default"]?Ug["default"]:Ug;
 
-},{"fbjs/lib/EventListener":14,"fbjs/lib/ExecutionEnvironment":15,"fbjs/lib/containsNode":18,"fbjs/lib/emptyFunction":19,"fbjs/lib/emptyObject":20,"fbjs/lib/focusNode":21,"fbjs/lib/getActiveElement":22,"fbjs/lib/shallowEqual":28,"object-assign":30,"react":38}],35:[function(require,module,exports){
+},{"fbjs/lib/EventListener":15,"fbjs/lib/ExecutionEnvironment":16,"fbjs/lib/containsNode":19,"fbjs/lib/emptyFunction":20,"fbjs/lib/emptyObject":21,"fbjs/lib/focusNode":22,"fbjs/lib/getActiveElement":23,"fbjs/lib/shallowEqual":29,"object-assign":31,"react":39}],36:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -20130,7 +20505,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":33,"./cjs/react-dom.production.min.js":34,"_process":3}],36:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":34,"./cjs/react-dom.production.min.js":35,"_process":3}],37:[function(require,module,exports){
 (function (process){
 /** @license React v16.2.0
  * react.development.js
@@ -21491,7 +21866,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fbjs/lib/emptyFunction":19,"fbjs/lib/emptyObject":20,"fbjs/lib/invariant":25,"fbjs/lib/warning":29,"object-assign":30,"prop-types/checkPropTypes":31}],37:[function(require,module,exports){
+},{"_process":3,"fbjs/lib/emptyFunction":20,"fbjs/lib/emptyObject":21,"fbjs/lib/invariant":26,"fbjs/lib/warning":30,"object-assign":31,"prop-types/checkPropTypes":32}],38:[function(require,module,exports){
 /** @license React v16.2.0
  * react.production.min.js
  *
@@ -21514,7 +21889,7 @@ var U={Children:{map:function(a,b,e){if(null==a)return a;var c=[];T(a,c,null,b,e
 d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=G.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)H.call(b,h)&&!I.hasOwnProperty(h)&&(c[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)c.children=e;else if(1<h){f=Array(h);for(var l=0;l<h;l++)f[l]=arguments[l+2];c.children=f}return{$$typeof:r,type:a.type,key:d,ref:g,props:c,_owner:k}},createFactory:function(a){var b=J.bind(null,a);b.type=a;return b},
 isValidElement:K,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:G,assign:m}},V=Object.freeze({default:U}),W=V&&U||V;module.exports=W["default"]?W["default"]:W;
 
-},{"fbjs/lib/emptyFunction":19,"fbjs/lib/emptyObject":20,"object-assign":30}],38:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":20,"fbjs/lib/emptyObject":21,"object-assign":31}],39:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -21525,4 +21900,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":36,"./cjs/react.production.min.js":37,"_process":3}]},{},[4]);
+},{"./cjs/react.development.js":37,"./cjs/react.production.min.js":38,"_process":3}]},{},[4]);

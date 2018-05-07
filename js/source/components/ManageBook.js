@@ -59,7 +59,7 @@ class ManageBook extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("manageBookGetResponse!");
+                //alert("manageBookGetResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });
@@ -136,7 +136,7 @@ class ManageBook extends React.Component{
                 img:this.state.img
             },
             success: function(){
-                alert("manageBookModifyResponse!");
+                //alert("manageBookModifyResponse!");
 
             }.bind(this)
         });
@@ -172,7 +172,7 @@ class ManageBook extends React.Component{
                 id:row.id+"",
             },
             success: function(){
-                alert("manageBookDeleteResponse!");
+                //alert("manageBookDeleteResponse!");
 
             }.bind(this)
         });
@@ -200,7 +200,7 @@ class ManageBook extends React.Component{
                 img:this.state.img
             },
             success: function(){
-                alert("manageBookAddResponse!");
+                //alert("manageBookAddResponse!");
 
             }.bind(this)
         });
@@ -271,7 +271,7 @@ class ManageBook extends React.Component{
             async: true,
             type: "get",
             success: function(data){
-                alert("manageBookFreshResponse!");
+                //alert("manageBookFreshResponse!");
                 this.setState({
                     data: JSON.parse(data),
                 });

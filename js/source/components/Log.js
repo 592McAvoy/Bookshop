@@ -46,7 +46,7 @@ class Log extends React.Component{
 
     checkLog(e){
         e.preventDefault();
-        alert("begin check log!\n");
+        //alert("begin check log!\n");
 
         var xmlhttp;
 
@@ -57,11 +57,11 @@ class Log extends React.Component{
         }
         this.serverRequest = (xmlhttp.onreadystatechange = function() {
            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-               alert("Response!");
+               //alert("Response!");
                var resp = xmlhttp.responseText+"";
                resp = resp.replace( /^\s+|\s+$/g, "" );
                if(resp.trim()=="USER"){
-                   alert("USER!\n");
+                   //alert("USER!\n");
                    this.handleLog();
                }else if(resp.trim()=="NULL"){
                    alert("user doesn't exist!")
@@ -120,7 +120,7 @@ class Log extends React.Component{
 
     checkRegister(e){
         e.preventDefault();
-        alert("begin check Register!\n");
+        //alert("begin check Register!\n");
         var xmlhttp;
 
         if (window.XMLHttpRequest) {
@@ -130,11 +130,11 @@ class Log extends React.Component{
         }
         this.serverRequest = (xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                alert("regResponse!");
+                //alert("regResponse!");
                 var pwd = xmlhttp.responseText+"";
                 pwd = pwd.replace( /^\s+|\s+$/g, "" );
                 if(pwd.trim()=="ADDUSER"){
-                    alert("add!");
+                    //alert("add!");
                     this.setState({
                         validUser:true,
                         validInfo:true
@@ -165,7 +165,7 @@ class Log extends React.Component{
         this.setState({
             logIn:false,
             register:false,
-            userName:"my friend",
+            userName:"",
             password:"",
             phoneNum:"",
             emailAddr:"",
@@ -224,7 +224,8 @@ class Log extends React.Component{
     changeEmailAddr(e) {
         var email = e.target.value;
         this.setState({emailAddr: email});
-        if (email.indexOf("@") > 1) {
+        var myReg=/^[a-zA-Z0-9_-]+@([a-zA-Z0-9]+\.)+(com|cn|net|org)$/;
+        if (myReg.test(email)) {
             console.log('email：验证成功');
             this.setState({validEmail: true});
             return;
@@ -283,12 +284,12 @@ class Log extends React.Component{
                 <form onSubmit={this.checkLog}>
                     <label>
                         UserName:<input type="text" value={this.state.userName} 
-                        onChange={this.changeUsr} placeholder="..."/>
+                        onChange={this.changeUsr} placeholder="username"/>
                     </label>
                     <br/>
                     <label>
-                        Password:<input type="text" value={this.state.password} 
-                        onChange={this.changePassword} placeholder="..."/>
+                        Password:<input type="password" value={this.state.password}
+                        onChange={this.changePassword} placeholder="password"/>
                     </label>
                     <br/>
                     <input type="submit" value="Log In"/>                    

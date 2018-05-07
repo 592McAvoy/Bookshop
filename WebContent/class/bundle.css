@@ -87,7 +87,7 @@ th {
 }
 
 .ManageUser table, .ManageBook table{
-  margin-top: 90px;
+  margin-top: 60px;
   margin-left: 40px;
 }
 .ManageUser input, .ManageBook input{
@@ -167,6 +167,7 @@ th {
     margin-bottom: 0px;
     height: 100px;
     position: relative;
+    background-color: #c2cad3;
 }
 .Logo #img{
     background-image: url('/images/1.jpg');
