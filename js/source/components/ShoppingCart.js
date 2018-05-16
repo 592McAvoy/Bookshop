@@ -190,7 +190,7 @@ class ShoppingCart extends React.Component{
                 },
                 type: "post",
                 success: function(data){
-                    alert("addSalesResponse!");
+                    //alert("addSalesResponse!");
                 }.bind(this)
             });
         }

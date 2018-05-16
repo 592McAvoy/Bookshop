@@ -235,14 +235,14 @@ th {
     font-weight: lighter;
 }
 
-.usrInfo #icon{
+/*.usrInfo #icon{
     background-image: url('/images/2.jpg');
     background-size: cover;
     width: 80px;
     height: 100px;
     float: left;
     margin-left: 250px;
-}
+}*/
 
 .usrInfo p{
     margin-left: 350px;

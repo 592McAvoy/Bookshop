@@ -1,20 +1,34 @@
 import React from 'react';
 import emitter from "./event";
+import FileUpload from 'react-fileupload';
 
 class UserInfo extends React.Component{
     constructor(props){
         super(props);
 
-        this.changeEdit = this.changeEdit.bind(this);
+        this.changeBookEdit = this.changeBookEdit.bind(this);
+        this.changeBookDesc = this.changeBookDesc.bind(this);
+        this.submitBookDesc = this.submitBookDesc.bind(this);
+        this.changeIntroEdit = this.changeIntroEdit.bind(this);
         this.changeIntro = this.changeIntro.bind(this);
         this.submitIntro = this.submitIntro.bind(this);
+        this.uploadIcon = this.uploadIcon.bind(this);
+        this.changeIcon = this.changeIcon.bind(this);
+        this.changeBook = this.changeBook.bind(this);
+        this.uploadBook = this.uploadBook.bind(this);
     
         this.state={
             load:false,
             name:"",
             introduction:"",
-            edit:false,
-            orderList:[]            
+            introEdit:false,
+            bookEdit:false,
+            orderList:[]   ,
+            iconFile:null,
+            iconURL:"upload/04b62c0f-b4c4-464d-aedd-a97394dff4a81605170209347dd58bb4jw1f7weh4w1d3j20kz0dwgnr.jpg",
+            bookFile:null,
+            bookUrl:"",
+            bookDesc:""
         }
     }
 
@@ -63,10 +77,10 @@ class UserInfo extends React.Component{
     }
     submitIntro(e){
         e.preventDefault();
-        this.setState({edit:false});
+        this.setState({introEdit:false});
     }
     renderIntro(){
-        if(this.state.edit){
+        if(this.state.introEdit){
             return(
                 <form onSubmit={this.submitIntro}>
                     <label>Introduction:{'        '}
@@ -80,20 +94,165 @@ class UserInfo extends React.Component{
             return(<p>Introduction:{'        '}{this.state.introduction}</p>);
         }
     }
-
-    changeEdit(e){
-        var edit = this.state.edit;
-        this.setState({edit:!edit});
+    changeIntroEdit(e){
+        var edit = this.state.introEdit;
+        this.setState({introEdit:!edit});
     }
+
+    changeBookDesc(e){
+        this.setState({bookDesc:e.target.value});
+    }
+    submitBookDesc(e){
+        e.preventDefault();
+        this.setState({bookEdit:false});
+    }
+    renderBookDesc(){
+        if(this.state.bookEdit){
+            return(
+                <form onSubmit={this.submitBookDesc}>
+                    <label>Book Description:{'        '}
+                        <input type="text" value={this.state.bookDesc}
+                               onChange={this.changeBookDesc}/>
+                    </label>
+                </form>
+            )
+        }
+        else{
+            return(<p>Book Description:{'        '}{this.state.bookDesc}</p>);
+        }
+    }
+    changeBookEdit(e){
+        var edit = this.state.bookEdit;
+        this.setState({bookEdit:!edit});
+    }
+
+    uploadIcon(e){
+        e.preventDefault();
+        //提交前先对文件进行检查，<input id="file" type="file">
+        var file = this.state.iconFile;//获取上传控件中的文件列表
+        console.log(file);
+        if(file == null){//没有指定文件
+            alert("请选择文件");
+        }
+        else{
+
+            if(file.size>1024*500){//检查文件大小，这里限定了文件大小不超过500KB
+                alert('文件太大');
+            }
+            else{
+                var formData = new FormData();
+                formData.append('file', file, file.name);//取得表单的所有数据
+                console.log(formData);
+
+                $.ajax({
+                    url:"/upload",
+                    method:"post",
+                    //timeout:5000,
+                    data:formData,
+                    processData:false,
+                    contentType:false,//这两行是上传文件时才需要加的
+                    success:function(data){
+                        console.log("上传成功");
+
+                        this.setState({iconURL:data});
+                        console.log(this.state.iconURL);
+
+                    }.bind(this),
+                    error:function(data){
+                        alert("上传失败");
+                    }.bind(this)
+                });
+            }
+        }
+        //return false;//还记得它的作用吗?阻止submit按钮提交表单
+    }
+    uploadBook(e) {
+        e.preventDefault();
+        //提交前先对文件进行检查，<input id="file" type="file">
+        var file = this.state.bookFile;//获取上传控件中的文件列表
+        console.log(file);
+        if (file == null) {//没有指定文件
+            alert("请选择文件");
+        }
+        else {
+
+            if (file.size > 1024 * 500) {//检查文件大小，这里限定了文件大小不超过500KB
+                alert('文件太大');
+            }
+            else {
+                var formData = new FormData();
+                formData.append('file', file, file.name);//取得表单的所有数据
+                console.log(formData);
+
+                $.ajax({
+                    url: "/upload",
+                    method: "post",
+                    //timeout:5000,
+                    data: formData,
+                    processData: false,
+                    contentType: false,//这两行是上传文件时才需要加的
+                    success: function (data) {
+                        console.log("上传成功");
+
+                        this.setState({bookURL: data});
+                        console.log(this.state.bookURL);
+
+                    }.bind(this),
+                    error: function (data) {
+                        alert("上传失败");
+                    }.bind(this)
+                });
+            }
+        }
+        //return false;//还记得它的作用吗?阻止submit按钮提交表单
+    }
+
+    changeIcon(e){
+        var file = e.target.files[0];
+        console.log(file);
+        this.setState({iconFile:file});
+    }
+    changeBook(e){
+        var file = e.target.files[0];
+        console.log(file);
+        this.setState({bookFile:file});
+    }
+
     renderInfo(){
         const intro = this.renderIntro();
+        const desc = this.renderBookDesc();
+
         return(
             <div className="usrInfo">
                 <h1>Personal Homepage</h1>
-                <div id="icon"></div>
+
+                <img id="icon" src={this.state.iconURL} width="100px" height="100px" />
+
+                <form encType="multipart/form-data" onSubmit={this.uploadIcon}>
+                    选择一个文件:
+                    <input type="file" name="uploadFile" accept="image/*" onChange={this.changeIcon}/>
+                    <br/>
+                    <input type="submit" value="上传"/>
+                </form>
+
+
                 <p>UserName:{'      '}{this.state.name}</p>
-                <div onDoubleClick={this.changeEdit}>
+                <div onDoubleClick={this.changeIntroEdit}>
                     {intro}
+                </div>
+
+                <span>My Favourite Book:
+                    <img id="book" src={this.state.bookURL} width="200px" height="300px" />
+                </span>
+                <form encType="multipart/form-data" onSubmit={this.uploadBook}>
+                    选择一个文件:
+                    <input type="file" name="uploadFile" accept="image/*" onChange={this.changeBook}/>
+                    <br/>
+                    <input type="submit" value="上传"/>
+                </form>
+
+                <div onDoubleClick={this.changeBookEdit}>
+                    {desc}
                 </div>
             </div>
         );

@@ -41,7 +41,7 @@ public class BookManageServlet extends HttpServlet {
         try {
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
-            System.out.println("This is a book manager");
+            //System.out.println("This is a book manager");
 
             BookDao dao = new BookDao();
             List<Book> result = dao.findAll();
@@ -64,7 +64,7 @@ public class BookManageServlet extends HttpServlet {
                 booksJson.add(obj);
             }
             JSONArray books = JSONArray.fromArray(booksJson.toArray());
-            System.out.println(books);
+            //System.out.println(books);
 
             out.println(books);
             out.flush();
