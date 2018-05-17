@@ -26,5 +26,6 @@
         <mapping resource="bookshop/Entity/Cart.hbm.xml"/>
         <mapping resource="bookshop/Entity/Order.hbm.xml"/>
         <mapping resource="bookshop/Entity/Sales.hbm.xml"/>
+        <mapping resource="bookshop/Entity/UserInfo.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

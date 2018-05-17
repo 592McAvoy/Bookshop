@@ -80,6 +80,7 @@ public class UploadServlet extends HttpServlet{
             System.out.println("测试URL: "+url);
             out.print(url);
             out.flush();
+            out.close();
 
         } catch (Exception ex) {
             ex.printStackTrace();

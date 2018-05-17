@@ -27,7 +27,7 @@ class UserInfo extends React.Component{
             iconFile:null,
             iconURL:"upload/04b62c0f-b4c4-464d-aedd-a97394dff4a81605170209347dd58bb4jw1f7weh4w1d3j20kz0dwgnr.jpg",
             bookFile:null,
-            bookUrl:"",
+            bookURL:"",
             bookDesc:""
         }
     }
@@ -58,6 +58,30 @@ class UserInfo extends React.Component{
                     });
                 }.bind(this)
             });
+            $.ajax({
+                url: "UserInfo",
+                async: true,
+                data:{username:name},
+                type: "get",
+                success: function(data){
+                    if(data == "null"){
+                        this.setState({
+                            bookDesc:"",
+                            bookURL:"",
+                            iconURL:"",
+                            introduction:""
+                        })
+                        return;
+                    }
+                    var info = JSON.parse(data);
+                    this.setState({
+                        bookDesc:info.bookDesc,
+                        bookURL:info.bookUrl,
+                        iconURL:info.iconUrl,
+                        introduction:info.intro
+                    })
+                }.bind(this)
+            });
         });
         this.eventEmitter2 = emitter.addListener("Order",(order)=>{
             var list = this.state.orderList;
@@ -77,6 +101,21 @@ class UserInfo extends React.Component{
     }
     submitIntro(e){
         e.preventDefault();
+        $.ajax({
+            url:"/UserInfo",
+            method:"post",
+            data:{
+                option:"intro",
+                username:this.state.name+"",
+                content:this.state.introduction+""
+            },
+            success:function(data){
+                console.log("update intro");
+            }.bind(this),
+            error:function(data){
+                alert("update失败");
+            }.bind(this)
+        });
         this.setState({introEdit:false});
     }
     renderIntro(){
@@ -103,7 +142,22 @@ class UserInfo extends React.Component{
         this.setState({bookDesc:e.target.value});
     }
     submitBookDesc(e){
-        e.preventDefault();
+        e.preventDefault()
+        $.ajax({
+            url:"/UserInfo",
+            method:"post",
+            data:{
+                option:"bookDesc",
+                username:this.state.name+"",
+                content:this.state.bookDesc+""
+            },
+            success:function(data){
+                console.log("update bookDesc");
+            }.bind(this),
+            error:function(data){
+                alert("update失败");
+            }.bind(this)
+        });
         this.setState({bookEdit:false});
     }
     renderBookDesc(){
@@ -147,14 +201,29 @@ class UserInfo extends React.Component{
                 $.ajax({
                     url:"/upload",
                     method:"post",
-                    //timeout:5000,
+                    async:false,
                     data:formData,
                     processData:false,
                     contentType:false,//这两行是上传文件时才需要加的
                     success:function(data){
                         console.log("上传成功");
-
-                        this.setState({iconURL:data});
+                        this.setState({iconURL:data},()=>{
+                            $.ajax({
+                                url:"/UserInfo",
+                                method:"post",
+                                data:{
+                                    option:"iconUrl",
+                                    username:this.state.name+"",
+                                    content:this.state.iconURL+""
+                                },
+                                success:function(data){
+                                    console.log("update iconUrl");
+                                }.bind(this),
+                                error:function(data){
+                                    alert("update失败");
+                                }.bind(this)
+                            });
+                        });
                         console.log(this.state.iconURL);
 
                     }.bind(this),
@@ -162,6 +231,9 @@ class UserInfo extends React.Component{
                         alert("上传失败");
                     }.bind(this)
                 });
+
+
+
             }
         }
         //return false;//还记得它的作用吗?阻止submit按钮提交表单
@@ -187,14 +259,30 @@ class UserInfo extends React.Component{
                 $.ajax({
                     url: "/upload",
                     method: "post",
-                    //timeout:5000,
+                    async:false,
                     data: formData,
                     processData: false,
                     contentType: false,//这两行是上传文件时才需要加的
                     success: function (data) {
                         console.log("上传成功");
 
-                        this.setState({bookURL: data});
+                        this.setState({bookURL: data},()=>{
+                            $.ajax({
+                                url:"/UserInfo",
+                                method:"post",
+                                data:{
+                                    option:"bookUrl",
+                                    username:this.state.name+"",
+                                    content:this.state.bookURL+""
+                                },
+                                success:function(data){
+                                    console.log("update bookUrl");
+                                }.bind(this),
+                                error:function(data){
+                                    alert("update失败");
+                                }.bind(this)
+                            });
+                        });
                         console.log(this.state.bookURL);
 
                     }.bind(this),
@@ -202,6 +290,7 @@ class UserInfo extends React.Component{
                         alert("上传失败");
                     }.bind(this)
                 });
+
             }
         }
         //return false;//还记得它的作用吗?阻止submit按钮提交表单

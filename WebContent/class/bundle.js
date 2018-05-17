@@ -3808,7 +3808,7 @@ var UserInfo = function (_React$Component) {
             iconFile: null,
             iconURL: "upload/04b62c0f-b4c4-464d-aedd-a97394dff4a81605170209347dd58bb4jw1f7weh4w1d3j20kz0dwgnr.jpg",
             bookFile: null,
-            bookUrl: "",
+            bookURL: "",
             bookDesc: ""
         };
         return _this;
@@ -3844,6 +3844,30 @@ var UserInfo = function (_React$Component) {
                         });
                     }.bind(_this2)
                 });
+                $.ajax({
+                    url: "UserInfo",
+                    async: true,
+                    data: { username: name },
+                    type: "get",
+                    success: function (data) {
+                        if (data == "null") {
+                            this.setState({
+                                bookDesc: "",
+                                bookURL: "",
+                                iconURL: "",
+                                introduction: ""
+                            });
+                            return;
+                        }
+                        var info = JSON.parse(data);
+                        this.setState({
+                            bookDesc: info.bookDesc,
+                            bookURL: info.bookUrl,
+                            iconURL: info.iconUrl,
+                            introduction: info.intro
+                        });
+                    }.bind(_this2)
+                });
             });
             this.eventEmitter2 = _event2.default.addListener("Order", function (order) {
                 var list = _this2.state.orderList;
@@ -3868,6 +3892,21 @@ var UserInfo = function (_React$Component) {
         key: 'submitIntro',
         value: function submitIntro(e) {
             e.preventDefault();
+            $.ajax({
+                url: "/UserInfo",
+                method: "post",
+                data: {
+                    option: "intro",
+                    username: this.state.name + "",
+                    content: this.state.introduction + ""
+                },
+                success: function (data) {
+                    console.log("update intro");
+                }.bind(this),
+                error: function (data) {
+                    alert("update失败");
+                }.bind(this)
+            });
             this.setState({ introEdit: false });
         }
     }, {
@@ -3911,6 +3950,21 @@ var UserInfo = function (_React$Component) {
         key: 'submitBookDesc',
         value: function submitBookDesc(e) {
             e.preventDefault();
+            $.ajax({
+                url: "/UserInfo",
+                method: "post",
+                data: {
+                    option: "bookDesc",
+                    username: this.state.name + "",
+                    content: this.state.bookDesc + ""
+                },
+                success: function (data) {
+                    console.log("update bookDesc");
+                }.bind(this),
+                error: function (data) {
+                    alert("update失败");
+                }.bind(this)
+            });
             this.setState({ bookEdit: false });
         }
     }, {
@@ -3968,14 +4022,31 @@ var UserInfo = function (_React$Component) {
                     $.ajax({
                         url: "/upload",
                         method: "post",
-                        //timeout:5000,
+                        async: false,
                         data: formData,
                         processData: false,
                         contentType: false, //这两行是上传文件时才需要加的
                         success: function (data) {
-                            console.log("上传成功");
+                            var _this3 = this;
 
-                            this.setState({ iconURL: data });
+                            console.log("上传成功");
+                            this.setState({ iconURL: data }, function () {
+                                $.ajax({
+                                    url: "/UserInfo",
+                                    method: "post",
+                                    data: {
+                                        option: "iconUrl",
+                                        username: _this3.state.name + "",
+                                        content: _this3.state.iconURL + ""
+                                    },
+                                    success: function (data) {
+                                        console.log("update iconUrl");
+                                    }.bind(_this3),
+                                    error: function (data) {
+                                        alert("update失败");
+                                    }.bind(_this3)
+                                });
+                            });
                             console.log(this.state.iconURL);
                         }.bind(this),
                         error: function (data) {
@@ -4009,14 +4080,32 @@ var UserInfo = function (_React$Component) {
                     $.ajax({
                         url: "/upload",
                         method: "post",
-                        //timeout:5000,
+                        async: false,
                         data: formData,
                         processData: false,
                         contentType: false, //这两行是上传文件时才需要加的
                         success: function (data) {
+                            var _this4 = this;
+
                             console.log("上传成功");
 
-                            this.setState({ bookURL: data });
+                            this.setState({ bookURL: data }, function () {
+                                $.ajax({
+                                    url: "/UserInfo",
+                                    method: "post",
+                                    data: {
+                                        option: "bookUrl",
+                                        username: _this4.state.name + "",
+                                        content: _this4.state.bookURL + ""
+                                    },
+                                    success: function (data) {
+                                        console.log("update bookUrl");
+                                    }.bind(_this4),
+                                    error: function (data) {
+                                        alert("update失败");
+                                    }.bind(_this4)
+                                });
+                            });
                             console.log(this.state.bookURL);
                         }.bind(this),
                         error: function (data) {
@@ -4100,7 +4189,7 @@ var UserInfo = function (_React$Component) {
     }, {
         key: 'renderOrder',
         value: function renderOrder() {
-            var _this3 = this;
+            var _this5 = this;
 
             return _react2.default.createElement(
                 'table',
@@ -4170,7 +4259,7 @@ var UserInfo = function (_React$Component) {
                                             { key: idx },
                                             title + " -- By " + rr.author + " ---- $" + rr.price + " * " + rr.amount + " = $" + rr.cost
                                         );
-                                    }, _this3)
+                                    }, _this5)
                                 )
                             )
                         );
