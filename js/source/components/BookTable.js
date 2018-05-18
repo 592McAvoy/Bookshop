@@ -1,5 +1,6 @@
 import React from 'react';
 import emitter from "./event";
+import { Button, Icon } from 'antd';
 
 class BookTable extends React.Component{
     constructor(props){
@@ -17,6 +18,7 @@ class BookTable extends React.Component{
         this.handleSort = this.handleSort.bind(this);
         this.addItem = this.addItem.bind(this);
         this.doFresh = this.doFresh.bind(this);
+        this.display = this.display.bind(this);
 
         this.state = {
             load:true,
@@ -237,6 +239,18 @@ class BookTable extends React.Component{
         }
         cb(item);
     }
+    display(e){
+        var idx = parseInt(e.target.dataset.row,10);
+        var data = this.state.data;
+        var item = data[idx];
+        var log = this.state.isLog;
+        const cb = (item,log) => {
+            emitter.emit("display",item,log)
+        }
+        cb(item,log);
+        this.setState({load:false});
+    }
+
     renderTable(){
         return(
             <table>
@@ -265,7 +279,12 @@ class BookTable extends React.Component{
                                     <td>{row.author}</td>
                                     <td>{"$"}{row.price}</td>
                                     <td>{row.publish}</td>
-                                    <td><a data-row={idx} href='#' onClick={this.addItem}>Add</a></td>
+                                    <td>
+                                        <Button type="primary" onClick={this.addItem} data-row={idx}>
+                                            <Icon type="plus" />Add</Button>
+                                        <Button type="primary" onClick={this.display} data-row={idx}>
+                                            <Icon type="right" /></Button>
+                                    </td>
                                 </tr>
                             );
                         },this)

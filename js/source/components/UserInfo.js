@@ -1,6 +1,5 @@
 import React from 'react';
 import emitter from "./event";
-import FileUpload from 'react-fileupload';
 
 class UserInfo extends React.Component{
     constructor(props){
