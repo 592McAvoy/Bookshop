@@ -1,13 +1,19 @@
 import React from 'react';
 import emitter from "./event";
 import { Button, Icon } from 'antd';
+import { Layout, Menu, Form, Input } from 'antd';
+const { SubMenu } = Menu;
+const { Header, Content, Sider } = Layout;
+import { Select } from 'antd';
+const Option = Select.Option;
+const Search = Input.Search;
+const InputGroup = Input.Group;
 
 class BookTable extends React.Component{
     constructor(props){
         super(props);
 
         this.changeCategory = this.changeCategory.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleSeniorSearch = this.handleSeniorSearch.bind(this);
         this.changeSelectIdx = this.changeSelectIdx.bind(this);
@@ -70,20 +76,27 @@ class BookTable extends React.Component{
     }
     
     changeCategory(e){
-        var newCate = e.target.firstChild.data;//.firstChild是一个文本节点，要获取里面的文本内容要用.data
+        //var newCate = e.target.firstChild.data;//.firstChild是一个文本节点，要获取里面的文本内容要用.data
+        var idx = parseInt(e.key,10);
+        var newCate = this.props.category[idx];
         this.setState({category:newCate});
     }
     renderCategory(){
         return(
-            <div className="Category">
-                <ul onClick={this.changeCategory}>                
+            <Sider className="Category">
+                <Menu mode="inline"
+                      defaultSelectedKeys={['']}
+                      defaultOpenKeys={['sub1']}
+                      style={{ height: '100%', borderRight: 0 }}
+                      onClick={this.changeCategory}>
                     {
                         this.props.category.map(function(item,idx){
-                            return  <li key={idx}>{item}</li>;
+                            return  <Menu.Item key={idx} data-row={idx} >
+                                {item}</Menu.Item>;
                         },this)
                     }
-                </ul>
-            </div>
+                </Menu>
+            </Sider>
         );
     }
 
@@ -102,32 +115,28 @@ class BookTable extends React.Component{
         });
     }
 
-    handleChange(e){
-        var newIdx = e.target.value;
-        this.setState({searchIdx:newIdx});
-    }
     handleSeniorSearch(e){
         var s = !this.state.seniorSearch;
         this.setState({
             seniorSearch:s
         })
     }
-    handleSubmit(e){
-        e.preventDefault();
+    handleSubmit(value){
         if(this.state.preData == null){
             this.state.preData = this.state.data;
         }
         var oldData = this.state.preData;
         var searchData = oldData.filter(function(row){
-            var idx = this.state.searchIdx;
+            //var idx = this.state.searchIdx;
+            var idx = value;
             return(
                 (row.title.indexOf(idx)>-1)||(row.author.indexOf(idx)>-1)
             );
         },this);
         this.setState({data:searchData});
     }
-    changeSelectIdx(e){
-        this.setState({selectIdx:e.target.value});
+    changeSelectIdx(value){
+        this.setState({selectIdx:value});
     }
     changeLow(e){
         this.setState({low:e.target.value})
@@ -172,18 +181,20 @@ class BookTable extends React.Component{
     renderSeniorSearch(){
         if(this.state.seniorSearch){
             return(
-                <form id='f2' onSubmit={this.handleSelect}>
-                    <select value={this.state.selectIdx} onChange={this.changeSelectIdx}>
-                        <option value="price">Price</option>
-                        <option value="publish">Publish</option>
-                    </select>
-                    <input id='min' type="text" placeholder=".." value={this.state.low}
-                    onChange={this.changeLow}/>
-                    <label>~</label>
-                    <input id='max' type="text" placeholder=".." value={this.state.high}
-                    onChange={this.changeHigh}/>
-                    <input type="submit" value="OK" />
-                    <button onClick={this.clearSelect}>Clear</button>
+                <form id='f2'>
+                    <InputGroup compact>
+                        <Select defaultValue="price" onChange={this.changeSelectIdx}>
+                            <Option value="price">Price</Option>
+                            <Option value="publish">Publish</Option>
+                        </Select>
+                        <Input id='min' type="text" value={this.state.low}
+                        onChange={this.changeLow} style={{ width: 100, textAlign: 'center' }} placeholder="Minimum"/>
+                        <Input style={{ width: 30, borderLeft: 0, pointerEvents: 'none', backgroundColor: '#fff' }} placeholder="~" disabled />
+                        <Input id='max' type="text" value={this.state.high}
+                        onChange={this.changeHigh} style={{ width: 100, textAlign: 'center', borderLeft: 0 }} placeholder="Maximum"/>
+                        <Button onClick={this.handleSelect}><Icon type="check" /></Button>
+                        <Button onClick={this.clearSelect}>Clear</Button>
+                    </InputGroup>
                 </form>
             );
         }
@@ -196,11 +207,11 @@ class BookTable extends React.Component{
         return (
             <div className="searchTool">
                 <form id='f1' onSubmit={this.handleSubmit}>
-                    <input id='i1' type="text" placeholder="..." value={this.state.searchIdx} 
-                    onChange={this.handleChange} />
-                    <input id='i2' type="submit" value="Search" />
-                    <button onClick={this.handleSeniorSearch}>{this.state.seniorSearch?"/\\":"\\/"}</button>
-                    <button onClick={this.doFresh}>Fresh</button>
+                    <Search id='i1' type="text" placeholder="..." value={this.state.searchIdx}
+                    onSearch={this.handleSubmit}
+                    enterButton />
+                    <Button onClick={this.handleSeniorSearch}>{this.state.seniorSearch?"/\\":"\\/"}</Button>
+                    <Button onClick={this.doFresh}><Icon type="sync" /></Button>
                 </form> 
                 {senior}
             </div>
@@ -253,6 +264,7 @@ class BookTable extends React.Component{
 
     renderTable(){
         return(
+            <Content>
             <table>
                 <thead onClick={this.handleSort}>
                     <tr> 
@@ -291,6 +303,7 @@ class BookTable extends React.Component{
                    }
                 </tbody>
             </table>
+            </Content>
         );
     }
 
@@ -302,9 +315,10 @@ class BookTable extends React.Component{
         const table = this.renderTable();
         const search = this.renderSearch();
         return(
-            <div className="BookTable">
-                {cate}{search}{table}
-            </div>
+            <Layout className="BookTable">
+                    {cate}
+                <Layout float="right">{search}{table}</Layout>
+            </Layout>
         );
     }
 

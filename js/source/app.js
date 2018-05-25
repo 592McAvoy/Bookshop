@@ -4,6 +4,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { userInfo } from 'os';
+import { Layout}from 'antd';
+const { Header, Content, Sider } = Layout;
 
 import Logo from './components/Logo'
 import Info from './components/Info'
@@ -27,21 +29,20 @@ if (!headers) {
 }
 
 ReactDOM.render(
-  <div className="layout">
-    <div className="header">
-      <Logo/>
-      <Info/>
-    </div>
-    <div className="content">
-      <BookTable category={category} headers={headers}/>
-      <DisplayBook/>
-      <ShoppingCart/>
-      <UserInfo/>
-      <Log/>
-      <ManageBook/>
-      <ManageUser/>
-        <Statistics/>
-    </div>    
-  </div>,
+  <Layout className="layout">
+        <Header className="header">
+          <Info/>
+        </Header>
+        <Layout className="content">
+          <BookTable category={category} headers={headers}/>
+          <DisplayBook />
+          <ShoppingCart />
+          <UserInfo />
+          <Log />
+          <ManageBook />
+          <ManageUser />
+          <Statistics/>
+        </Layout>
+  </Layout>,
   document.getElementById('app')
 );

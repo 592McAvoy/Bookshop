@@ -1,5 +1,7 @@
 import React from 'react';
 import emitter from "./event";
+import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+
 
 class Info extends React.Component{
     constructor(props){
@@ -42,30 +44,34 @@ class Info extends React.Component{
         }
         if(this.state.isAdmin){
             return(
-                <div className="Info">
-                    <a href='#' onClick = {cb("ManageBook")}>Manage Book</a>
-                    <a href='#' onClick = {cb("ManageUser")}>Manage User</a>
-                    <a href='#' onClick = {cb("SalesStatistics")}>Sales Statistics</a>
-                    <a href='#' onClick = {cb("Log")}>Log out</a>
-                </div>
+                <Menu className="Info">
+                    <Menu.Item href='#' onClick = {cb("ManageBook")}>Manage Book</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("ManageUser")}>Manage User</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("SalesStatistics")}>Sales Statistics</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("Log")}>Log out</Menu.Item>
+                </Menu>
             );
         }
         if(this.state.isLog){
             return(
-                <div className="Info">
-                    <a href='#' onClick = {cb("Homepage")}>Homepage</a>
-                    <a href='#' onClick = {cb("Shopping")}>Shopping Cart</a>
-                    <a href='#' onClick = {cb("User")}>UserInfo</a>
-                    <a href='#' onClick = {cb("Log")}>Log out</a>
-                </div>
+                <Menu mode="horizontal"
+                    defaultSelectedKeys={['1']}
+                    style={{ lineHeight: '64px' }} className="Info">
+                    <Menu.Item href='#' onClick = {cb("Homepage")}>Homepage</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("Shopping")}>Shopping Cart</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("User")}>UserInfo</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("Log")}>Log out</Menu.Item>
+                </Menu>
             );
         }
         else{
             return(
-                <div className="Info">
-                    <a href='#' onClick = {cb("Homepage")}>Homepage</a>
-                    <a href='#' onClick = {cb("Log")}>Log in</a>
-                </div>
+                <Menu mode="horizontal"
+                      defaultSelectedKeys={['2']}
+                      style={{ lineHeight: '64px' }} className="Info">
+                    <Menu.Item href='#' onClick = {cb("Homepage")}>Homepage</Menu.Item>
+                    <Menu.Item href='#' onClick = {cb("Log")}>Log in</Menu.Item>
+                </Menu>
             );
         }
     }
