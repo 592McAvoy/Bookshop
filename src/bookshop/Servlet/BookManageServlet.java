@@ -2,7 +2,7 @@ package bookshop.Servlet;
 
 import bookshop.Dao.BookDao;
 import bookshop.Entity.Book;
-
+import bookshop.Service.BookService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,8 +12,11 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,11 +29,23 @@ import static java.lang.Integer.parseInt;
 public class BookManageServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @Autowired
+    private BookService bookService;
+
+    public void setBookService(BookService bookService) {
+        this.bookService = bookService;
+    }
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public BookManageServlet() {
         super();
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     /**
@@ -41,30 +56,8 @@ public class BookManageServlet extends HttpServlet {
         try {
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
-            //System.out.println("This is a book manager");
 
-            BookDao dao = new BookDao();
-            List<Book> result = dao.findAll();
-            Iterator<Book> it = result.iterator();
-            ArrayList<JSONObject> booksJson = new ArrayList<JSONObject>();
-            while (it.hasNext()) {
-                Book book = (Book) it.next();
-
-                JSONObject obj = new JSONObject();
-                obj.put("id", book.getId());
-                obj.put("category", book.getCategory());
-                obj.put("title", book.getTitle());
-                obj.put("author", book.getAuthor());
-                obj.put("price", book.getPrice());
-                obj.put("publish", book.getPublish());
-                obj.put("stock", book.getStock());
-                obj.put("img", book.getImg());
-
-                System.out.println(obj.toString());
-                booksJson.add(obj);
-            }
-            JSONArray books = JSONArray.fromArray(booksJson.toArray());
-            //System.out.println(books);
+            JSONArray books = bookService.getJsonBooks();
 
             out.println(books);
             out.flush();
@@ -93,10 +86,8 @@ public class BookManageServlet extends HttpServlet {
             String op = request.getParameter("operation");
             Integer id = parseInt(request.getParameter("id"), 10);
 
-            BookDao dao = new BookDao();
-
             if (op.equals("delete")) {
-                dao.delete(id);
+                bookService.deleteBook(id);
             } else {
                 String catagory = (String) request.getParameter("category");
                 String title = (String) request.getParameter("title");
@@ -118,9 +109,9 @@ public class BookManageServlet extends HttpServlet {
 
                 System.out.println(book);
                 if (op.equals("update")) {
-                    dao.update(book);
+                    bookService.updateBook(book);
                 } else if (op.equals("insert")) {
-                    dao.save(book);
+                    bookService.saveBook(book);
                 }
             }
 
@@ -131,7 +122,6 @@ public class BookManageServlet extends HttpServlet {
             out.close();
 
         } catch (Exception ex) {
-            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             if (ServletException.class.isInstance(ex)) {
                 throw (ServletException) ex;
             } else {
