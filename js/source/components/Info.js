@@ -44,7 +44,9 @@ class Info extends React.Component{
         }
         if(this.state.isAdmin){
             return(
-                <Menu className="Info">
+                <Menu mode="horizontal"
+                      defaultSelectedKeys={['0']}
+                      style={{ lineHeight: '64px' }} className="Info">
                     <Menu.Item href='#' onClick = {cb("ManageBook")}>Manage Book</Menu.Item>
                     <Menu.Item href='#' onClick = {cb("ManageUser")}>Manage User</Menu.Item>
                     <Menu.Item href='#' onClick = {cb("SalesStatistics")}>Sales Statistics</Menu.Item>
@@ -55,7 +57,7 @@ class Info extends React.Component{
         if(this.state.isLog){
             return(
                 <Menu mode="horizontal"
-                    defaultSelectedKeys={['1']}
+                    defaultSelectedKeys={['0']}
                     style={{ lineHeight: '64px' }} className="Info">
                     <Menu.Item href='#' onClick = {cb("Homepage")}>Homepage</Menu.Item>
                     <Menu.Item href='#' onClick = {cb("Shopping")}>Shopping Cart</Menu.Item>
@@ -67,7 +69,7 @@ class Info extends React.Component{
         else{
             return(
                 <Menu mode="horizontal"
-                      defaultSelectedKeys={['2']}
+                      defaultSelectedKeys={['0']}
                       style={{ lineHeight: '64px' }} className="Info">
                     <Menu.Item href='#' onClick = {cb("Homepage")}>Homepage</Menu.Item>
                     <Menu.Item href='#' onClick = {cb("Log")}>Log in</Menu.Item>

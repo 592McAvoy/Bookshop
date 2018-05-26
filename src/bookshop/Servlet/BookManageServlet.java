@@ -1,17 +1,12 @@
 package bookshop.Servlet;
 
-import bookshop.Dao.BookDao;
 import bookshop.Entity.Book;
 import bookshop.Service.BookService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 

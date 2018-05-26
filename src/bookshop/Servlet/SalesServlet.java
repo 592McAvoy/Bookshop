@@ -1,14 +1,12 @@
 package bookshop.Servlet;
 
 import bookshop.Entity.Sales;
-import bookshop.Dao.SalesDao;
+import bookshop.Service.SalesService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,7 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import static java.lang.Integer.parseInt;
 
@@ -28,11 +27,23 @@ import static java.lang.Integer.parseInt;
 public class SalesServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @Autowired
+    private SalesService salesService;
+
+    public void setSalesService(SalesService salesService) {
+        this.salesService = salesService;
+    }
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public SalesServlet() {
         super();
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     /**
@@ -45,43 +56,15 @@ public class SalesServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
-            System.out.println("This is a sales manager");
-
-
-            SalesDao dao = new SalesDao();
-            List<Sales> result = dao.findAll();
-            System.out.println("normal here!\n");
-            Iterator<Sales> it = result.iterator();
-
-            ArrayList<JSONObject> booksJson = new ArrayList<JSONObject>();
-            while (it.hasNext()) {
-                Sales ss = (Sales) it.next();
-                //System.out.println(book);
-                JSONObject obj = new JSONObject();
-                //obj.put("id",book.getId());
-                obj.put("category",ss.getCategory());
-                obj.put("title",ss.getTitle());
-                obj.put("author",ss.getAuthor());
-                obj.put("price",ss.getPrice());
-                obj.put("amount",ss.getAmount());
-                obj.put("username",ss.getUsername());
-                obj.put("time",ss.getTime());
-
-                System.out.println(obj.toString());
-                booksJson.add(obj);
-            }
-            JSONArray books = JSONArray.fromArray(booksJson.toArray());
-
-
-            System.out.println(books);
+            JSONArray books = salesService.getJsonSales();
 
             out.println(books);
             out.flush();
             out.close();
-            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
+
         }
         catch (Exception ex) {
-            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
+
             if ( ServletException.class.isInstance( ex ) ) {
                 throw ( ServletException ) ex;
             }
@@ -102,10 +85,6 @@ public class SalesServlet extends HttpServlet {
 
             System.out.println("PostServlet invoke!");
 
-
-            SalesDao dao = new SalesDao();
-
-
             String catagory = (String) request.getParameter("category");
             String title = (String) request.getParameter("title");
             String author = (String) request.getParameter("author");
@@ -123,8 +102,7 @@ public class SalesServlet extends HttpServlet {
             ss.setUsername(username);
             ss.setTime(time);
 
-            System.out.println(ss);
-            dao.save(ss);
+            salesService.saveSales(ss);
 
             out.print("UPDATESales");
 
@@ -132,7 +110,6 @@ public class SalesServlet extends HttpServlet {
             out.close();
 
         } catch (Exception ex) {
-            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().rollback();
             if (ServletException.class.isInstance(ex)) {
                 throw (ServletException) ex;
             } else {

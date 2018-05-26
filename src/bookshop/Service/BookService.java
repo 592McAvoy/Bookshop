@@ -19,7 +19,6 @@ public class BookService {
 
     public JSONArray getJsonBooks(){
         List<Book> result = dao.findAll();
-        System.out.println("normal here!\n");
         Iterator<Book> it = result.iterator();
 
         ArrayList<JSONObject> booksJson = new ArrayList<>();
@@ -34,8 +33,6 @@ public class BookService {
             obj.put("publish",book.getPublish());
             obj.put("stock",book.getStock());
             obj.put("img",book.getImg());
-
-            System.out.println(obj.toString());
             booksJson.add(obj);
         }
         return JSONArray.fromArray(booksJson.toArray());

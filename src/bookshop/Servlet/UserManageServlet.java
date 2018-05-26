@@ -1,18 +1,18 @@
 package bookshop.Servlet;
 
 import bookshop.Entity.User;
-import bookshop.Dao.UserDao;
+import bookshop.Service.UserService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,11 +25,23 @@ import static java.lang.Integer.parseInt;
 public class UserManageServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @Autowired
+    private UserService userService;
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public UserManageServlet() {
         super();
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     /**
@@ -43,28 +55,7 @@ public class UserManageServlet extends HttpServlet {
 
             System.out.println("Servlet invoke!");
 
-
-            UserDao dao = new UserDao();
-            List<User> result = dao.findAll();
-            System.out.println("normal here!\n");
-            Iterator<User> it = result.iterator();
-
-            ArrayList<JSONObject> booksJson = new ArrayList<JSONObject>();
-            while (it.hasNext()) {
-                User user = (User)it.next();
-                //System.out.println(book);
-                JSONObject obj = new JSONObject();
-                obj.put("username",user.getUsername());
-                obj.put("pwd",user.getPwd());
-                obj.put("role",user.getRole());
-                obj.put("email",user.getEmail());
-                obj.put("phone",user.getPhone());
-                obj.put("state",user.getState());
-
-                System.out.println(obj.toString());
-                booksJson.add(obj);
-            }
-            JSONArray users = JSONArray.fromArray(booksJson.toArray());
+            JSONArray users = userService.getJsonUsers();
 
             out.print(users);
 
@@ -97,12 +88,8 @@ public class UserManageServlet extends HttpServlet {
             String op = request.getParameter("operation");
             String username = (String) request.getParameter("username");
 
-            UserDao dao = new UserDao();
-
             if(op.equals("delete")) {
-                System.out.println("delete");
-                dao.delete(username);
-                System.out.println("delete success");
+                userService.deleteUser(username);
             }
             else {
                 String pwd = (String) request.getParameter("pwd");
@@ -121,10 +108,10 @@ public class UserManageServlet extends HttpServlet {
 
                 System.out.println(newuser);
                 if(op.equals("update")) {
-                    dao.update(newuser);
+                    userService.updateUser(newuser);
                 }
                 else if(op.equals("insert")){
-                    dao.save(newuser);
+                    userService.saveUser(newuser);
                 }
             }
 

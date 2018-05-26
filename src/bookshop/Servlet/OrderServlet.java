@@ -1,17 +1,12 @@
 package bookshop.Servlet;
 
-import bookshop.Dao.BookDao;
-import bookshop.Entity.Book;
 import bookshop.Entity.Order;
-import bookshop.Dao.OrderDao;
+import bookshop.Service.OrderService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import static java.lang.Integer.parseInt;
 
@@ -32,11 +28,23 @@ import static java.lang.Integer.parseInt;
 public class OrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    @Autowired
+    private OrderService orderService;
+
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public OrderServlet() {
         super();
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
     }
 
     /**
@@ -52,30 +60,9 @@ public class OrderServlet extends HttpServlet {
             System.out.println("OrderServlet invoke!");
 
             String username = (String) request.getParameter("name");
-            //Integer bookid = parseInt(request.getParameter("id"),10);
 
-            OrderDao dao = new OrderDao();
-            List<Order> result = dao.findByName(username);
-            BookDao bdao = new BookDao();
-            System.out.println("normal here!\n");
-            Iterator<Order> it = result.iterator();
+            JSONArray books = orderService.getJsonOrders(username);
 
-            ArrayList<JSONObject> booksJson = new ArrayList<JSONObject>();
-            while (it.hasNext()) {
-                Order order = (Order) it.next();
-
-                JSONObject obj = new JSONObject();
-                obj.put("id",order.getId());
-                obj.put("time",order.getTime());
-                obj.put("totalCost",order.getCost());
-                obj.put("content",order.getContent());
-
-                System.out.println(obj.toString());
-                booksJson.add(obj);
-            }
-            JSONArray books = JSONArray.fromArray(booksJson.toArray());
-
-            System.out.println(books.toString());
             out.println(books);
             out.flush();
             out.close();
@@ -100,15 +87,10 @@ public class OrderServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=utf-8");
 
-            System.out.println("addServlet invoke!");
-
             String username = (String) request.getParameter("name");
             Integer cost = parseInt(request.getParameter("cost"), 10);
             String time = request.getParameter("time");
             String content = request.getParameter("content");
-            System.out.println("content: "+content);
-
-            OrderDao dao = new OrderDao();
 
             Order order = new Order();
             order.setContent(content);
@@ -117,12 +99,9 @@ public class OrderServlet extends HttpServlet {
             order.setTime(time);
 
             System.out.println(order);
-            dao.save(order);
+            orderService.saveOrder(order);
 
 
-
-
-            //HibernateUtil.getSessionFactory().getCurrentSession().getTransaction().commit();
             out.flush();
             out.close();
 
