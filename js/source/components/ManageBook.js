@@ -369,10 +369,10 @@ class ManageBook extends React.Component{
                                        <input type="text" value={this.state.author}
                                                       onChange={this.changeAuthor}/>
                                     </td>
-                                    <label>
+                                    <td>
                                         <input type="text" value={this.state.price}
                                                      onChange={this.changePrice}/>
-                                    </label>
+                                    </td>
                                     <td>
                                         <input type="text" value={this.state.publish}
                                                        onChange={this.changePublish}/>

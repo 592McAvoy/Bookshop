@@ -1,5 +1,9 @@
 import React from 'react';
 import emitter from "./event";
+import { Row, Col } from 'antd';
+import { Input, Card} from 'antd';
+const { TextArea } = Input;
+const { Meta } = Card;
 
 class UserInfo extends React.Component{
     constructor(props){
@@ -122,7 +126,7 @@ class UserInfo extends React.Component{
             return(
                 <form onSubmit={this.submitIntro}>
                     <label>Introduction:{'        '}
-                        <input type="text" value={this.state.introduction} 
+                        <TextArea rows={2} type="text" value={this.state.introduction}
                         onChange={this.changeIntro}/>
                     </label>
                 </form>
@@ -164,7 +168,7 @@ class UserInfo extends React.Component{
             return(
                 <form onSubmit={this.submitBookDesc}>
                     <label>Book Description:{'        '}
-                        <input type="text" value={this.state.bookDesc}
+                        <TextArea rows={4} type="text" value={this.state.bookDesc}
                                onChange={this.changeBookDesc}/>
                     </label>
                 </form>
@@ -313,35 +317,50 @@ class UserInfo extends React.Component{
         return(
             <div className="usrInfo">
                 <h1>Personal Homepage</h1>
-
-                <img id="icon" src={this.state.iconURL} width="100px" height="100px" />
-
-                <form encType="multipart/form-data" onSubmit={this.uploadIcon}>
-                    选择一个文件:
-                    <input type="file" name="uploadFile" accept="image/*" onChange={this.changeIcon}/>
-                    <br/>
-                    <input type="submit" value="上传"/>
-                </form>
-
-
-                <p>UserName:{'      '}{this.state.name}</p>
-                <div onDoubleClick={this.changeIntroEdit}>
-                    {intro}
-                </div>
-
-                <span>My Favourite Book:
-                    <img id="book" src={this.state.bookURL} width="200px" height="300px" />
-                </span>
-                <form encType="multipart/form-data" onSubmit={this.uploadBook}>
-                    选择一个文件:
-                    <input type="file" name="uploadFile" accept="image/*" onChange={this.changeBook}/>
-                    <br/>
-                    <input type="submit" value="上传"/>
-                </form>
-
-                <div onDoubleClick={this.changeBookEdit}>
-                    {desc}
-                </div>
+                <Row gutter={16}>
+                    <Col span={4}>
+                        <Card
+                            hoverable
+                            cover={<img id="icon" src={this.state.iconURL} width="200px" height="200px" />}
+                        >
+                        </Card>
+                        <Card>
+                            <form encType="multipart/form-data" onSubmit={this.uploadIcon}>
+                                <input type="file" name="uploadFile" accept="image/*" onChange={this.changeIcon}/>
+                                <br/>
+                                <input type="submit" value="上传"/>
+                            </form>
+                        </Card>
+                    </Col>
+                    <Col span={4}>
+                        <p>UserName:{'      '}{this.state.name}</p>
+                        <div onDoubleClick={this.changeIntroEdit}>
+                            {intro}
+                        </div>
+                    </Col>
+                    <Col span={4}>
+                        <Card
+                            hoverable
+                            cover={<img id="book" src={this.state.bookURL} width="200px" height="300px" />}
+                        >
+                            <Meta
+                                title="My Favorite Book"
+                            />
+                        </Card>
+                        <Card>
+                            <form encType="multipart/form-data" onSubmit={this.uploadBook}>
+                                <input type="file" name="uploadFile" accept="image/*" onChange={this.changeBook}/>
+                                <br/>
+                                <input type="submit" value="上传"/>
+                            </form>
+                        </Card>
+                    </Col>
+                    <Col span={4}>
+                        <div onDoubleClick={this.changeBookEdit}>
+                            {desc}
+                        </div>
+                    </Col>
+                </Row>
             </div>
         );
 

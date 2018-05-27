@@ -1,5 +1,7 @@
 import React from 'react';
 import emitter from "./event";
+import { Row, Col } from 'antd';
+import { Card, List ,Button, Icon} from 'antd';
 
 class DisplayBook extends React.Component{
     constructor(props){
@@ -14,7 +16,6 @@ class DisplayBook extends React.Component{
             book:null
         };
     }
-
 
     componentDidMount(){
         this.eventEmitter = emitter.addListener("display",(item,log)=>{
@@ -64,17 +65,34 @@ class DisplayBook extends React.Component{
             return <div></div>;
         }
         else{
+            const data =[
+                "Title --- "+book.title,
+                "Author ---- "+book.author,
+                "Publish year --- "+book.publish,
+                "Price ----$ "+book.price
+            ]
             return(
                 <div>
-                    <img src={book.img} width="200px" height="400px"/>
-                    <ul>
-                        <li>{"Title "+book.title}</li>
-                        <li>{"Author "+book.author}</li>
-                        <li>{"Publish year "+book.publish}</li>
-                        <li>{"Price: $"+book.price}</li>
-                    </ul>
-                    <button onClick={this.addItem}>Add</button>
-                    <button onClick={this.goBack}>Go Back</button>
+                    <Row gutter={16}>
+                        <Col span={8}>
+                            <Card
+                                hoverable
+                                style={{ width: 300 }}
+                                cover={<img src={book.img}/>}
+                            >
+                            </Card>
+                        </Col>
+                        <Col span={8}>
+                            <List
+                                size="large"
+                                bordered
+                                dataSource={data}
+                                renderItem={item => (<List.Item>{item}</List.Item>)}
+                            />
+                            <Button onClick={this.addItem}><Icon type="plus" />Add</Button>
+                            <Button onClick={this.goBack}>Go Back<Icon type="rollback" /></Button>
+                        </Col>
+                    </Row>
                 </div>
             );
         }

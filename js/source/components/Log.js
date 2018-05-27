@@ -1,5 +1,7 @@
 import React from 'react';
 import emitter from "./event";
+import { Input, Icon, Button } from 'antd';
+import { Alert } from 'antd';
 
 class Log extends React.Component{
     constructor(props){
@@ -246,32 +248,72 @@ class Log extends React.Component{
                 <div>
                 <form id='f1' onSubmit={this.checkRegister}>
                     <label>
-                        UserName:<input type="text" value={this.state.userName} 
-                        onChange={this.changeUsr} placeholder="..."/>
-                        <span id="s1">{this.state.validUser?"":"user already exists"}</span>
+                        UserName:
+                        <Input
+                            type="text"
+                            value={this.state.userName}
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changeUsr}
+                            placeholder="Enter your username"/>
+                        {this.state.validUser?"":<Alert
+                            message="user already exists"
+                            type="error"
+                            showIcon
+                        />}
                     </label>
                     <br/>
                     <label>
-                        Password:<input type="text" value={this.state.password} 
-                        onChange={this.changePassword} placeholder="..."/>
-                        <span id="s2">{this.state.validPwd?"":"please combine letters with numbers"}</span>
+                        Password:
+                        <Input
+                            type="text"
+                            value={this.state.password}
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changePassword}
+                            placeholder="..."/>
+                        {this.state.validPwd?"":<Alert
+                            message="please combine letters with numbers"
+                            type="warning"
+                            showIcon
+                        />}
                     </label>
                     <br/>
                     <label>
-                        PhoneNumber:<input type="text" value={this.state.phoneNum} 
-                        onChange={this.changePhoneNum} placeholder="..."
-                        onKeyUp={this.dealNum}/>
-                        <span id="s3">{this.state.validPhone?"":"invalid phone number"}</span>
+                        PhoneNumber:
+                        <Input
+                            type="text"
+                            value={this.state.phoneNum}
+                            prefix={<Icon type="mobile" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changePhoneNum}
+                            placeholder="Enter your phone number"
+                            onKeyUp={this.dealNum}/>
+                        {this.state.validPhone?"":
+                            <Alert
+                                description="invalid phone number"
+                                type="warning"
+                                showIcon
+                            />}
                     </label>
                     <br/>
                     <label>
-                        EmailAddr:<input type="text" value={this.state.emailAddr} 
-                        onChange={this.changeEmailAddr} placeholder="..."/>
-                        <span id="s4">{this.state.validEmail?"":"invalid email address"}</span>
+                        EmailAddr:
+                        <Input
+                            type="text"
+                            value={this.state.emailAddr}
+                            prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changeEmailAddr}
+                            placeholder="..."/>
+                        {this.state.validEmail?"":
+                            <Alert
+                                description="invalid email address"
+                                type="warning"
+                                showIcon
+                            />}
                     </label>
                     <br/>
-                    <input type="submit" value="Register"
-                           disabled={!(this.state.validEmail&&this.state.validPhone&&this.state.validPwd)}/>
+                    <Button type="primary" htmlType="submit" className="login-form-button"
+                            disabled={!(this.state.validEmail&&this.state.validPhone&&this.state.validPwd)}>
+                        Register
+                    </Button>
                 </form>
             </div>
             );
@@ -279,20 +321,32 @@ class Log extends React.Component{
         return(
             <div>
                 <p>New user please 
-                    <button onClick={this.handleRegister}> click here</button>
+                    <Button onClick={this.handleRegister}> click here</Button>
                 to register</p>
                 <form onSubmit={this.checkLog}>
                     <label>
-                        UserName:<input type="text" value={this.state.userName} 
-                        onChange={this.changeUsr} placeholder="username"/>
+                        UserName:
+                        <Input
+                            type="text"
+                            value={this.state.userName}
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changeUsr}
+                            placeholder="Enter your username"/>
                     </label>
                     <br/>
                     <label>
-                        Password:<input type="password" value={this.state.password}
-                        onChange={this.changePassword} placeholder="password"/>
+                        Password:
+                        <Input
+                            type="password"
+                            value={this.state.password}
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            onChange={this.changePassword}
+                            placeholder="Enter your password"/>
                     </label>
                     <br/>
-                    <input type="submit" value="Log In"/>                    
+                    <Button type="primary" htmlType="submit" className="login-form-button">
+                        Log in
+                    </Button>
                 </form>
             </div>
         );

@@ -30,7 +30,7 @@ public class SalesService {
             obj.put("amount",ss.getAmount());
             obj.put("username",ss.getUsername());
             obj.put("time",ss.getTime());
-            
+
             booksJson.add(obj);
         }
         return JSONArray.fromArray(booksJson.toArray());
