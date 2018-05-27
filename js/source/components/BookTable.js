@@ -8,6 +8,7 @@ import { Select } from 'antd';
 const Option = Select.Option;
 const Search = Input.Search;
 const InputGroup = Input.Group;
+import { Table } from 'react-bootstrap';
 
 class BookTable extends React.Component{
     constructor(props){
@@ -265,7 +266,7 @@ class BookTable extends React.Component{
     renderTable(){
         return(
             <Content>
-            <table>
+            <Table striped bordered condensed hover>
                 <thead onClick={this.handleSort}>
                     <tr> 
                         {
@@ -302,7 +303,7 @@ class BookTable extends React.Component{
                         },this)
                    }
                 </tbody>
-            </table>
+            </Table>
             </Content>
         );
     }

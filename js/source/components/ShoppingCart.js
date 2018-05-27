@@ -1,5 +1,8 @@
 import React from 'react';
 import emitter from "./event";
+import { Table } from 'react-bootstrap';
+import { Button, Icon} from 'antd';
+const ButtonGroup = Button.Group;
 
 class ShoppingCart extends React.Component{
     constructor(props){
@@ -220,7 +223,7 @@ class ShoppingCart extends React.Component{
     renderList(){
         return(
             <div>
-                <table>
+                <Table striped bordered condensed hover>
                     <thead>
                         <tr>
                             <th>title</th><th>price</th><th>amount</th>
@@ -235,18 +238,25 @@ class ShoppingCart extends React.Component{
                                     <td>{"$"}{row.price}</td>
                                     <td>{row.amount}</td>
                                     <td>
-                                        <button data-row={idx} onClick={this.icrNum}>+</button>
-                                        <button data-row={idx} onClick={this.dcrNum}>-</button>
+                                        <ButtonGroup>
+                                            <Button type="primary" data-row={idx} onClick={this.icrNum}>
+                                                <Icon type="plus" />Add
+                                            </Button>
+                                            <Button type="dashed" data-row={idx} onClick={this.dcrNum}>
+                                                <Icon type="minus" />
+                                            </Button>
+                                        </ButtonGroup>
                                     </td>
                                 </tr>
                                 )
                             },this)
                         }
                     </tbody>
-                </table>
+                </Table>
                 <p>Total Cost:{"     $"}{this.totalCost()}</p>
                 <br/>
-                <button id="bb" onClick={this.generateOrder}>->Gengerate Order</button>
+                <Button id="bb" type="primary" onClick={this.generateOrder}>Gengerate Order
+                    <Icon type="double-right" /></Button>
             </div>
         )
     }

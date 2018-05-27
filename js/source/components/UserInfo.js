@@ -4,6 +4,7 @@ import { Row, Col } from 'antd';
 import { Input, Card} from 'antd';
 const { TextArea } = Input;
 const { Meta } = Card;
+import { Table } from 'react-bootstrap';
 
 class UserInfo extends React.Component{
     constructor(props){
@@ -318,7 +319,7 @@ class UserInfo extends React.Component{
             <div className="usrInfo">
                 <h1>Personal Homepage</h1>
                 <Row gutter={16}>
-                    <Col span={4}>
+                    <Col span={3}>
                         <Card
                             hoverable
                             cover={<img id="icon" src={this.state.iconURL} width="200px" height="200px" />}
@@ -332,7 +333,7 @@ class UserInfo extends React.Component{
                             </form>
                         </Card>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3}>
                         <p>UserName:{'      '}{this.state.name}</p>
                         <div onDoubleClick={this.changeIntroEdit}>
                             {intro}
@@ -355,7 +356,7 @@ class UserInfo extends React.Component{
                             </form>
                         </Card>
                     </Col>
-                    <Col span={4}>
+                    <Col span={6}>
                         <div onDoubleClick={this.changeBookEdit}>
                             {desc}
                         </div>
@@ -368,7 +369,7 @@ class UserInfo extends React.Component{
 
     renderOrder(){
         return(
-            <table>
+            <Table striped bordered condensed hover>
                 <thead>
                     <tr>
                         <th>No.</th><th>TotalCost</th><th>Time</th><th>Content</th>
@@ -399,7 +400,7 @@ class UserInfo extends React.Component{
                         },this)
                     }
                 </tbody>
-            </table>
+            </Table>
         );
     }
     

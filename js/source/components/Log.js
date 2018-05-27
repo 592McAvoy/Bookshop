@@ -1,7 +1,7 @@
 import React from 'react';
 import emitter from "./event";
 import { Input, Icon, Button } from 'antd';
-import { Alert } from 'antd';
+import { Alert,message } from 'antd';
 
 class Log extends React.Component{
     constructor(props){
@@ -97,7 +97,7 @@ class Log extends React.Component{
         }
         cb("Log in");
 
-        alert("Welcome "+this.state.userName);
+        message.success("Welcome "+this.state.userName);
 
         const ca = (msg) => {
             emitter.emit("Page",msg)
@@ -239,7 +239,7 @@ class Log extends React.Component{
             return (
                 <div>
                 <p>Welcome{" "}{this.state.userName}!</p>
-                <button onClick={this.handleLogOut}> Log out</button>
+                <Button onClick={this.handleLogOut}> Log out</Button>
                 </div>
             );
         }
