@@ -1,7 +1,8 @@
 node_modules/
 .idea/
-WebContent/WEB-INF
-WebContent/class
+src/main/webapp/class
 out/
 js/build
+target/
+
 

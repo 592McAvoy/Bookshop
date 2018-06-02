@@ -1,5 +1,6 @@
 import React from 'react';
 import emitter from "./event";
+import { Table } from 'react-bootstrap';
 
 class ManageBook extends React.Component{
     constructor(props){
@@ -283,7 +284,6 @@ class ManageBook extends React.Component{
     }
 
     renderSearch(){
-        console.log("renderSearch")
         return(
             <form>
                 <select value={this.state.selectIdx} onChange={this.changeSelectIdx}>
@@ -336,7 +336,7 @@ class ManageBook extends React.Component{
     }
     renderTable(){
         return(
-            <table>
+            <Table striped bordered condensed hover>
                 <thead>
                 <tr>
                     {
@@ -411,7 +411,7 @@ class ManageBook extends React.Component{
                     },this)
                 }
                 </tbody>
-            </table>
+            </Table>
         );
     }
 

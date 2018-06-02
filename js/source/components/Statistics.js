@@ -1,5 +1,6 @@
 import React from 'react';
 import emitter from "./event";
+import { Table } from 'react-bootstrap';
 
 class Statistics extends React.Component{
     constructor(props){
@@ -80,7 +81,6 @@ class Statistics extends React.Component{
         e.preventDefault();
         var data;
         if(this.state.predata == null){
-            //console.log("predata: "+this.state.predata);
             data = this.state.data;
             this.setState({predata:data});
         }else{
@@ -143,7 +143,7 @@ class Statistics extends React.Component{
 
     renderTable(){
         return(
-            <table>
+            <Table striped bordered condensed hover>
                 <thead>
                 <tr>
                     {
@@ -171,7 +171,7 @@ class Statistics extends React.Component{
                     },this)
                 }
                 </tbody>
-            </table>
+            </Table>
         );
     }
 

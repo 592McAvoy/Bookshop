@@ -1,5 +1,6 @@
 import React from 'react';
 import emitter from "./event";
+import { Table } from 'react-bootstrap';
 
 class ManageUser extends React.Component{
     constructor(props){
@@ -248,7 +249,6 @@ class ManageUser extends React.Component{
 
 
     renderSearch(){
-        console.log("renderSearch")
         return(
             <form>
                 <label>
@@ -292,7 +292,7 @@ class ManageUser extends React.Component{
     }
     renderTable(){
         return(
-            <table>
+            <Table striped bordered condensed hover>
                 <thead>
                 <tr>
                     {
@@ -357,7 +357,7 @@ class ManageUser extends React.Component{
                     },this)
                 }
                 </tbody>
-            </table>
+            </Table>
         );
     }
 
