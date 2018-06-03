@@ -241,7 +241,8 @@ class BookTable extends React.Component{
             const cb = (msg) => {
                     emitter.emit("Page",msg)
             }
-            cb("Log");                       
+            cb("Log");
+            return;
         }
         var idx = parseInt(e.target.dataset.row,10);
         var data = this.state.data;

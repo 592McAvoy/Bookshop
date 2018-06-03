@@ -1,7 +1,7 @@
 import React from 'react';
 import emitter from "./event";
 import { Table } from 'react-bootstrap';
-import { Button, Icon} from 'antd';
+import { Button, Icon, message} from 'antd';
 const ButtonGroup = Button.Group;
 
 class ShoppingCart extends React.Component{
@@ -52,15 +52,17 @@ class ShoppingCart extends React.Component{
             //var record = this.state.record;
             if( idx > -1){
                 if(list[idx].amount >= list[idx].stock){
-                    alert("stock shortage!")
+                    message.error("stock shortage!");
                     return;
                 }else{
+                    message.info("add "+item.title);
                     list[idx].amount += 1;
                 }
             }
             else{
                 list.push(item);
                 list[list.indexOf(item)].amount = 1;
+                message.info("add "+item.title);
             }
             $.ajax({
                 url: "Cart",
@@ -104,7 +106,7 @@ class ShoppingCart extends React.Component{
         n += 1;
         //record[idx] += 1;
         if(n > list[idx].stock){
-            alert("stock shortage!")
+            message.error("stock shortage!")
             return;
         }
         $.ajax({
@@ -157,6 +159,7 @@ class ShoppingCart extends React.Component{
         
     }
     generateOrder(e){
+        message.success("New order generated");
         var sum = this.totalCost();
         if(sum <= 0){
             return;

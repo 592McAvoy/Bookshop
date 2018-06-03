@@ -21,11 +21,11 @@
         <property name="show_sql">true</property>
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">update</property>
-        <mapping resource="User.hbm.xml"/>
-        <mapping resource="Book.hbm.xml"/>
-        <mapping resource="Cart.hbm.xml"/>
-        <mapping resource="Order.hbm.xml"/>
-        <mapping resource="Sales.hbm.xml"/>
-        <mapping resource="UserInfo.hbm.xml"/>
+        <mapping resource="hbmConfig/User.hbm.xml"/>
+        <mapping resource="hbmConfig/Book.hbm.xml"/>
+        <mapping resource="hbmConfig/Cart.hbm.xml"/>
+        <mapping resource="hbmConfig/Order.hbm.xml"/>
+        <mapping resource="hbmConfig/Sales.hbm.xml"/>
+        <mapping resource="hbmConfig/UserInfo.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

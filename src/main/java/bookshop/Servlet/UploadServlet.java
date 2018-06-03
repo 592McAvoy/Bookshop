@@ -55,7 +55,7 @@ public class UploadServlet extends HttpServlet{
 
             //获取上传文件的目录
             //String root=request.getServletContext().getRealPath("/upload");
-            String root = "C:\\Users\\lyc\\Desktop\\BookShop\\WebContent\\upload";
+            String root = "C:\\Users\\lyc\\Desktop\\BookShop\\src\\main\\webapp\\upload";
             //String root = "C:\\Users\\lyc\\Desktop\\upload";
             System.out.println("测试上传文件的路径："+root);
             File dir = new File(root);
