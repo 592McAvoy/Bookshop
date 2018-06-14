@@ -1,30 +1,45 @@
 package bookshop.Servlet;
 
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import java.io.File;
+import bookshop.Service.UploadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.UUID;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+
 
 /**
  * @author BieHongLi
  * @version 创建时间：2017年3月4日 下午5:29:03
  * 注意：上传文件必须添加@MultipartConfig()可以设置上传文件的大小
  */
-@WebServlet("/upload")
+@WebServlet("/dealImg")
 @MultipartConfig
 public class UploadServlet extends HttpServlet{
 
     private static final long serialVersionUID = 1L;
+
+    @Autowired
+    private UploadService uploadService;
+
+    public void setUploadService(UploadService uploadService) {
+        this.uploadService = uploadService;
+    }
+
+    public void init(ServletConfig config) throws ServletException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+                config.getServletContext());
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -33,52 +48,48 @@ public class UploadServlet extends HttpServlet{
             PrintWriter out = response.getWriter();
             response.setContentType("text/html;charset=UTF-8");
 
-            //检测是否为多媒体上传
-            if (!ServletFileUpload.isMultipartContent(request)) {
-                // 如果不是则停止
-                //PrintWriter writer = response.getWriter();
-                out.println("Error: 表单必须包含 enctype=multipart/form-data");
-                out.flush();
-                return;
+            String base64img = request.getParameter("file");
+            String username = request.getParameter("username");
+            String colName = request.getParameter("type");
+
+            uploadService.changeCol(colName);
+
+            System.out.println(base64img);
+
+            uploadService.saveInDB(username,base64img);
+
+            out.flush();
+            out.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if ( ServletException.class.isInstance( ex ) ) {
+                throw ( ServletException ) ex;
             }
-
-
-            //获取上传的文件
-            Part part = request.getPart("file");
-            if(part == null){
-                System.out.println("null part!");
+            else {
+                throw new ServletException( ex );
             }
+        }
 
-            //获取请求的信息
-            //String name=part.getHeader("content-disposition");
-            System.out.println("ok here");//测试使用
+    }
 
-            //获取上传文件的目录
-            //String root=request.getServletContext().getRealPath("/upload");
-            String root = "C:\\Users\\lyc\\Desktop\\BookShop\\src\\main\\webapp\\upload";
-            //String root = "C:\\Users\\lyc\\Desktop\\upload";
-            System.out.println("测试上传文件的路径："+root);
-            File dir = new File(root);
-            if(!dir.exists()){
-                dir.mkdir();//如果目录不存在，则创建
-            }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            //OutputStream sos = response.getOutputStream();
+            PrintWriter out = response.getWriter();
+            response.setContentType("text/html;charset=UTF-8");
 
-            //获取文件的后缀
-            String str = part.getSubmittedFileName();//获取上传文件名
-            System.out.println("测试获取文件的名称："+str);
 
-            //生成一个新的文件名，不重复，数据库存储的就是这个文件名，不重复的
-           // String randname = UUID.randomUUID().toString()+str;
-            String randname = str;
-            String filename= root +"\\"+ randname;
-            System.out.println("测试产生新的文件名："+filename);
+            String username = request.getParameter("username");
+            String colName = request.getParameter("type");
 
-            //上传文件到指定目录，不想上传文件就不调用这个
-            part.write(filename);
+            uploadService.changeCol(colName);
 
-            String url = "upload/"+randname;
-            System.out.println("测试URL: "+url);
-            out.print(url);
+            String content = uploadService.getImg(username);
+
+            out.print(content);
             out.flush();
             out.close();
 

@@ -12,6 +12,10 @@
     <bean id="userDao" class="bookshop.Dao.impl.UserDaoImpl"> </bean>
     <bean id="userInfoDao" class="bookshop.Dao.impl.UserInfoDaoImpl"> </bean>
     <bean id="cartDao" class="bookshop.Dao.impl.CartDaoImpl"> </bean>
+    <bean id="mangoDao" class="bookshop.Dao.impl.MongoDaoImpl">
+        <property name="collectionName" value="icon"> </property>
+        <property name="dbName" value="bookshop"> </property>
+    </bean>
 
     <!-- Service Bean -->
     <bean id="bookService" class="bookshop.Service.impl.BookServiceImpl">
@@ -32,6 +36,9 @@
     </bean>
     <bean id="salesService" class="bookshop.Service.impl.SalesServiceImpl">
         <property name="dao" ref="salesDao"> </property>
+    </bean>
+    <bean id="uploadService" class="bookshop.Service.impl.UploadServiceImpl">
+        <property name="dao" ref="mangoDao"></property>
     </bean>
 
 </beans>

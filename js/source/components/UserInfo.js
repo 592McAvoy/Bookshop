@@ -1,7 +1,7 @@
 import React from 'react';
 import emitter from "./event";
 import { Row, Col } from 'antd';
-import { Input, Card} from 'antd';
+import { Input, Card, Button, Icon} from 'antd';
 const { TextArea } = Input;
 const { Meta } = Card;
 import { Table } from 'react-bootstrap';
@@ -32,7 +32,7 @@ class UserInfo extends React.Component{
             iconURL:"upload/04b62c0f-b4c4-464d-aedd-a97394dff4a81605170209347dd58bb4jw1f7weh4w1d3j20kz0dwgnr.jpg",
             bookFile:null,
             bookURL:"",
-            bookDesc:""
+            bookDesc:"",
         }
     }
 
@@ -80,10 +80,44 @@ class UserInfo extends React.Component{
                     var info = JSON.parse(data);
                     this.setState({
                         bookDesc:info.bookDesc,
-                        bookURL:info.bookUrl,
-                        iconURL:info.iconUrl,
                         introduction:info.intro
                     })
+                }.bind(this)
+            });
+            $.ajax({
+                url:"/dealImg",
+                method:"get",
+                data:{
+                    type:"icon",
+                    username:name
+                },
+                success:function(data){
+                    if(data != null){
+                        this.setState({
+                            iconURL:data
+                        })
+                    }
+                }.bind(this),
+                error:function(data){
+                    alert("update failed");
+                }.bind(this)
+            });
+            $.ajax({
+                url:"/dealImg",
+                method:"get",
+                data:{
+                    type:"book",
+                    username:name
+                },
+                success:function(data){
+                    if(data != null) {
+                        this.setState({
+                            bookURL:data
+                        })
+                    }
+                }.bind(this),
+                error:function(data){
+                    alert("update failed");
                 }.bind(this)
             });
         });
@@ -130,6 +164,7 @@ class UserInfo extends React.Component{
                         <TextArea rows={2} type="text" value={this.state.introduction}
                         onChange={this.changeIntro}/>
                     </label>
+                    <Button onClick={this.submitIntro}><Icon type="check" /></Button>
                 </form>
             )
         }
@@ -172,6 +207,7 @@ class UserInfo extends React.Component{
                         <TextArea rows={4} type="text" value={this.state.bookDesc}
                                onChange={this.changeBookDesc}/>
                     </label>
+                    <Button onClick={this.submitBookDesc}><Icon type="check" /></Button>
                 </form>
             )
         }
@@ -198,49 +234,32 @@ class UserInfo extends React.Component{
                 alert('文件太大');
             }
             else{
-                var formData = new FormData();
-                formData.append('file', file, file.name);//取得表单的所有数据
-                console.log(formData);
-
-                $.ajax({
-                    url:"/upload",
-                    method:"post",
-                    async:false,
-                    data:formData,
-                    processData:false,
-                    contentType:false,//这两行是上传文件时才需要加的
-                    success:function(data){
-                        console.log("上传成功");
-                        this.setState({iconURL:data},()=>{
-                            $.ajax({
-                                url:"/UserInfo",
-                                method:"post",
-                                data:{
-                                    option:"iconUrl",
-                                    username:this.state.name+"",
-                                    content:this.state.iconURL+""
-                                },
-                                success:function(data){
-                                    console.log("update iconUrl");
-                                }.bind(this),
-                                error:function(data){
-                                    alert("update失败");
-                                }.bind(this)
-                            });
-                        });
-                        console.log(this.state.iconURL);
-
-                    }.bind(this),
-                    error:function(data){
-                        alert("上传失败");
-                    }.bind(this)
-                });
-
-
+                var fileReader = new FileReader();
+                var name = this.state.name;
+                fileReader.onload = function(e){
+                    const base64file = this.result;
+                    $("#icon").attr("src",base64file);
+                    $.ajax({
+                        url:"/dealImg",
+                        method:"post",
+                        data:{
+                            type:"icon",
+                            file:base64file+"",
+                            username:name+"",
+                        },
+                        success:function(data){
+                            console.log("upload success");
+                        }.bind(this),
+                        error:function(data){
+                            alert("upload failed");
+                        }.bind(this)
+                    });
+                    //就是base64
+                }
+                fileReader.readAsDataURL(file);
 
             }
         }
-        //return false;//还记得它的作用吗?阻止submit按钮提交表单
     }
     uploadBook(e) {
         e.preventDefault();
@@ -256,45 +275,29 @@ class UserInfo extends React.Component{
                 alert('文件太大');
             }
             else {
-                var formData = new FormData();
-                formData.append('file', file, file.name);//取得表单的所有数据
-                console.log(formData);
-
-                $.ajax({
-                    url: "/upload",
-                    method: "post",
-                    async:false,
-                    data: formData,
-                    processData: false,
-                    contentType: false,//这两行是上传文件时才需要加的
-                    success: function (data) {
-                        console.log("上传成功");
-
-                        this.setState({bookURL: data},()=>{
-                            $.ajax({
-                                url:"/UserInfo",
-                                method:"post",
-                                data:{
-                                    option:"bookUrl",
-                                    username:this.state.name+"",
-                                    content:this.state.bookURL+""
-                                },
-                                success:function(data){
-                                    console.log("update bookUrl");
-                                }.bind(this),
-                                error:function(data){
-                                    alert("update失败");
-                                }.bind(this)
-                            });
-                        });
-                        console.log(this.state.bookURL);
-
-                    }.bind(this),
-                    error: function (data) {
-                        alert("上传失败");
-                    }.bind(this)
-                });
-
+                var fileReader = new FileReader();
+                var name = this.state.name;
+                fileReader.onload = function(e){
+                    const base64file = this.result;
+                    $("#book").attr("src",base64file);
+                    $.ajax({
+                        url:"/dealImg",
+                        method:"post",
+                        data:{
+                            type:"book",
+                            file:base64file+"",
+                            username:name+"",
+                        },
+                        success:function(data){
+                            console.log("upload success");
+                        }.bind(this),
+                        error:function(data){
+                            alert("upload failed");
+                        }.bind(this)
+                    });
+                    //就是base64
+                }
+                fileReader.readAsDataURL(file);
             }
         }
         //return false;//还记得它的作用吗?阻止submit按钮提交表单
