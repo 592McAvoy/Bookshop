@@ -2,6 +2,9 @@ import React from 'react';
 import emitter from "./event";
 import { Row, Col } from 'antd';
 import { Input, Card, Button, Icon} from 'antd';
+import { Select} from 'antd';
+const Option = Select.Option;
+const Search = Input.Search;
 const { TextArea } = Input;
 const { Meta } = Card;
 import { Table } from 'react-bootstrap';
@@ -20,6 +23,8 @@ class UserInfo extends React.Component{
         this.changeIcon = this.changeIcon.bind(this);
         this.changeBook = this.changeBook.bind(this);
         this.uploadBook = this.uploadBook.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
     
         this.state={
             load:false,
@@ -33,6 +38,8 @@ class UserInfo extends React.Component{
             bookFile:null,
             bookURL:"",
             bookDesc:"",
+            selectIdx:"Title",
+            preList:null
         }
     }
 
@@ -85,7 +92,7 @@ class UserInfo extends React.Component{
                 }.bind(this)
             });
             $.ajax({
-                url:"/dealImg",
+                url:"dealImg",
                 method:"get",
                 data:{
                     type:"icon",
@@ -103,7 +110,7 @@ class UserInfo extends React.Component{
                 }.bind(this)
             });
             $.ajax({
-                url:"/dealImg",
+                url:"dealImg",
                 method:"get",
                 data:{
                     type:"book",
@@ -370,6 +377,66 @@ class UserInfo extends React.Component{
 
     }
 
+    handleSelect(value){
+        this.setState({selectIdx:value});
+    }
+    handleSearch(value){
+        var data;
+        if(this.state.preList == null){
+            data = this.state.orderList;
+            this.setState({preList:data});
+        }else{
+            data = this.state.preList;
+        }
+
+        var idx = this.state.selectIdx;
+        var newdata;
+        if(idx=="Title"){
+            newdata = data.filter(function (row) {
+                var judge = -1;
+                row.content.map((rr)=>{
+                    if(rr.title.indexOf(value)>-1){judge=1}
+                },this)
+                return judge>0
+                //return (row.username.indexOf(this.state.userIdx)>-1)
+            }, this);
+        }
+        else if(idx == "Author"){
+            newdata = data.filter(function (row) {
+                var judge = -1;
+                row.content.map((rr)=>{
+                    if(rr.author.indexOf(value)>-1){judge=1}
+                },this)
+                return judge>0
+                //return (row.username.indexOf(this.state.userIdx)>-1)
+            }, this);
+        }
+        else{
+            newdata = data.filter(function (row) {
+                return (row.time.indexOf(value)>-1)
+            }, this);
+        }
+        this.setState({orderList:newdata});
+    }
+
+    renderSearch(){
+        const selectBefore = (
+            <Select defaultValue="Title" style={{ width: 150 }} onChange={this.handleSelect}>
+                <Option value="Title">Book Title</Option>
+                <Option value="Author">Book Author</Option>
+                <Option value="Date">Date</Option>
+            </Select>
+        );
+        return(
+            <Search
+                addonBefore={selectBefore}
+                placeholder="input search text"
+                onSearch={this.handleSearch}
+                enterButton
+            />
+        );
+    }
+
     renderOrder(){
         return(
             <Table striped bordered condensed hover>
@@ -413,9 +480,10 @@ class UserInfo extends React.Component{
         }
         const info = this.renderInfo();
         const orderTable = this.renderOrder();
+        const search = this.renderSearch();
         return (
             <div className="UserInfo">
-                {info}{orderTable}
+                {info}{search}{orderTable}
             </div>
         );
     }
